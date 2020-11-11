@@ -18,6 +18,10 @@
 
 \setmathfont{XITS Math}
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\var}{Var}
+
 \newtheorem{assumption}{Assumption}
 \newtheorem{definition}{Definition}
 
@@ -76,10 +80,19 @@ We will write a non-technical memo in Section \ref{sec:memo} to give our proposa
 
 % TODO: assigned to Orash
 
-\section{Variables}
+\section{List of symbols}
 
 To make our model concise and straight forward, a list of symbols are defined as following, as shown in Table \ref{tab:symbols}.
 The meaning of the symbols are to be explained in detail in the rest of this article.
+In the table, the symbols in lower case are variables w.r.t. a project,
+and the symbols in upper case are variables w.r.t. the plan.
+The difference between a project and the plan is described in Section \ref{sec:projects and the plan}.
+
+Note that in this article, all numberings
+(like $x$ here numbering the projects, and $n$ later numbering the years)
+start with $0$ instead of $1$ to meet the convention in computer science.
+
+The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
 
 %\begin{definition}[efficiency]
 %	The \textbf{efficiency} of a plan is defined as
@@ -95,13 +108,13 @@ The meaning of the symbols are to be explained in detail in the rest of this art
   \begin{tabular}{cccc}
 	Symbol & Domain & Unit & Definition\\
 	\hline
-	$x$ & $\mathbb N$ & & the index of projects\\
-	$D$ & $\mathbb Z^+$ & year & Duration of the plan\\
-	$d_x$ & $\mathbb Z^+$ & year & Duration of project $x$\\
+	$x$ & $\mathbb N$ & & The index of projects\\
+	$D$ & $\mathbb N$ & year & Duration of the plan\\
+	$d_x$ & $\mathbb N$ & year & Duration of project $x$\\
 	$n$ & $\mathbb N$ & year & Time (index of years)\\
 	$Z$ & $\mathscr P\left(\mathbb N\right)$ & & The set of chosen projects\\
-	$F$ & $\mathbb R^+$ & dollar & Total funds\\
-	$b_x$ & $\left[0,\infty\right)$ & osu\tablefootnote{
+	$F$ & $\left[0,+\infty\right)$ & dollar & Total funds\\
+	$b_x$ & $\left[0,+\infty\right)$ & osu\tablefootnote{
      The unit osu is invented to represent the unit of benefit.
 	} & Benefit of project $x$\\
 	$u_x$ & $\left[0,1\right]$ & & Taxonomic uniqueness of project $x$\\
@@ -110,20 +123,25 @@ The meaning of the symbols are to be explained in detail in the rest of this art
 	$E$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
 	$c_x$ & $\left[0,+\infty\right)$ & dollar & Total cost of project $x$\\
 	$C_n$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan in the $n$th year\\
-	$\beta_x$ &$\left[0,+\infty\right)$& osu & Effective benefit of project $x$\\
-	$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan
+	$\beta_x$ & $\left[0,+\infty\right)$ & osu & Effective benefit of project $x$\\
+	$B$ & $\left[0,+\infty\right)$ & osu & Total effective benefit of the plan\\
+	$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan\\
+	$\xi$ & $\mathbb N$ & & The project with longest duration in the plan\\
+	$a_x$ & $\mathbb N$ & year & When project $x$ starts
   \end{tabular}
 \end{table}
 \section{Restatement of the problem}
 \label{sec:restatement}
 
 In Florida, many plant species are facing the challenge of extinction.
-Various plant conservation project are now being conducted to resolve this problem.
-However, the fund mainly from the annual fundraising is not sufficient to support all projects.
-Therefore, it is essential to make a plan to precisely decide which project should be included.
-The final goal of this plan is not to save as many as plant species as possible.
-Instead, it should generate more benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
-The time spanning to finish the whole plan is also a factor that should be seriously considered as more time being taken to protect one species, the likelihood of conserving another shall decrease, finally leading to less benefit.
+Various plant conservation projects with different budgets and timelines are now being conducted to resolve this problem.
+However, one major issue is that funds mainly from the annual fundraising are not sufficient to support all projects.
+Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their fund.
+What's notable is that the final goal of this plan is not to simply save as many as plant species as possible.
+Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
+The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of conserving another shall decrease, finally leading to less benefit.
+Another factor is the funds spent on these projects.
+Obviously, a project with median benefit but high expense doesn't fit.
 The most suitable plan we need to find out should include all variables mentioned and give the best result.
 
 % TODO: assigned to Stephen
@@ -138,13 +156,17 @@ Funds are provided once per year, depicted by $f_n$.
 	Conservation cannot be paused.
 \end{assumption}
 \begin{assumption}
-	Different conservations can be done simultanously and do not affect each other.
+	Different conservations can be done simultaneously and do not affect each other.
 \end{assumption}
 \begin{assumption}
 	Extra funds' last year can be saved for this year.
 \end{assumption}
 \begin{assumption}
 	The conservation plan should not change when it is ongoing.	
+\end{assumption}
+\begin{assumption}
+\label{as:time efficiency over balancing}
+The maximization of time efficiency is prior to the balancing of funds spent over time.
 \end{assumption}
 
 % TODO: assigned to Orash
@@ -274,23 +296,28 @@ k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\frac{\sigma}{I}>\
 \end{equation}
 \end{comment}
 
-\subsection{Raw attributes of projects}
+\subsection{Projects and the plan}
+\label{sec:projects and the plan}
 
 The word \textbf{project} is used to represent a conservation of a certain species of plant.
-In this article, the symbol $x$ is used to number and denote a project.
-Note that in this article, all numberings
-(like $x$ here numbering the projects, and $n$ later numbering the years)
-start with $0$ instead of $1$ to meet the convention in computer science.
-
-According to the TPD, there are some \textbf{raw datas} attributed to a project $x$, which are
+According to the TPD, there are some \textbf{raw data} attributed to a project $x$, which are
 the \textbf{unique id}, the \textbf{taxonomic uniqueness} $u_x$, the \textbf{feasibility of success} $s_x$, the \textbf{cost} $c_{x,n}$ of the $n$th year.
+These concepts are explained in Section \ref{sec:raw attributes}.
+
+The word \textbf{plan} is used to represent how the projects are going to be executed,
+including which projects are executed (the set $Z$) and when they should start (the sequence $\left\{a_x\right\}$).
+Deciding the which projects to be executed is to maximize the time efficiency (described in Section \ref{sec:time efficiency}).
+Deciding when the projects start is to minimize the variance of yearly cost (described in Section \ref{sec:variance of yearly costs}).
+
+\subsection{Raw attributes of projects}
+\label{sec:raw attributes}
 
 To make the concepts more clear and make it easy to use them later,
-although the meanings of the raw datas are described in the TPD,
+although the meanings of the raw data are described in the TPD,
 their meanings should be re-described in a mathematical way.
 
 \begin{definition}[benefit]
-The \textbf{benefit} of a project is a real number $b_x\in\left[0,+\infty\right)$.
+The \textbf{benefit} of project $x$ is a real number $b_x\in\left[0,+\infty\right)$.
 \end{definition}
 
 The benefit is an important indicator indicating how imperiled the species is and how easy the project can be done.
@@ -298,7 +325,7 @@ However, $b_x$ cannot be directly used to measure how much can we benefit from f
 Another derived concept called \textbf{effective benefit} should be used instead, as explained in Section \ref{sec:effective benefit}.
 
 \begin{definition}[taxonomic uniqueness]
-The \textbf{taxonomic uniqueness} of a project is a real number $u_x\in\left[0,1\right]$.
+The \textbf{taxonomic uniqueness} of project $x$ is a real number $u_x\in\left[0,1\right]$.
 \end{definition}
 
 The taxonomic uniqueness is a measure of how the species is unique from other species.
@@ -306,17 +333,16 @@ It is stipulated that $u_x=0$ if there exists a species that is exactly the same
 and $u_x=1$ if the species conserved in project $x$ does not have any similarities with any other species.
 
 \begin{definition}[feasibility of success]
-The \textbf{feasibility of success} of a project is a real number $s_x\in\left[0,1\right]$.
+The \textbf{feasibility of success} of project $x$ is a real number $s_x\in\left[0,1\right]$.
 \end{definition}
 
-The feasibility of success is the probability of the success of the project.
+The meaning of $s_x$ is the probability of the success of project $x$.
 
-\subsection{Constraints to the plan}
+\begin{definition}[yearly cost]
+The \textbf{yearly cost} of project $x$ is a real number $c_{x,n}\in\left[0,+\infty\right)$.
+\end{definition}
 
-The word \textbf{plan} is used to represent how the projects are going to be executed,
-including which projects are executed and when should they start.
-
-% TODO: assigned to Ulysses
+The meaning of $c_{x,n}$ is cost of project $x$ in the $n$th year.
 
 \subsection{Effective benefit}
 \label{sec:effective benefit}
@@ -324,7 +350,7 @@ including which projects are executed and when should they start.
 Although $b_x$ is defined for a project, hardly can a project lead to so much benefit finally.
 A new concept should be defined to describe how much can people actually benefit from finishing the project.
 
-\begin{definition}
+\begin{definition}[effective benefit]
 The \textbf{effective benefit} of a project is a real number $\beta_x\in\left[0,+\infty\right)$ defined as
 \begin{equation}
 \label{eq:effective benefit}
@@ -354,16 +380,105 @@ Combining the two effects above, the formula for effective benefit (Equation \re
 From now on, when measuring how much can a project benefit people,
 $\beta_x$ is used instead of $b_x$.
 
+By summing up the effective benefit for all projects of the plan, the total effective benefit can be defined.
+
+\begin{definition}[total effective benefit]
+The \textbf{total effective benefit} of the project is a real number $B\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+B:=\sum_{x\in Z}b_x.
+\end{equation}
+\end{definition}
+
+The $B$ is an important indicator of how much a plan is expected to benefit if the plan is executed.
+
+\subsection{Duration}
+\label{sec:duration}
+
+The \textbf{duration} of a project is the time for which it lasts.
+It can be defined according to the yearly costs of the project.
+
+\begin{definition}[duration of project]
+The \textbf{duration of project} $x$ is a real number $d_x\in\mathbb N$ defined as
+\begin{equation}
+d_x:=\min\left\{m\in\mathbb N\middle|\forall n\ge m:c_{x,n}=0\right\}
+\end{equation}
+\end{definition}
+
+According to the TPD, a project must be able to end, which means such $d_x$ must exist.
+
+The duration of the plan should be defined as the time interval between the time when the first project of the plan starts and the time when the last project of the plan ends.
+However, due to Assumption \ref{as:time efficiency over balancing}, the duration of the plan should unnecessarily be defined in a so straight-forward way.
+A better definition is given in Equation \ref{eq:duration of the plan} in Section \ref{sec:time efficiency}.
+
+\subsection{Time efficiency}
+\label{sec:time efficiency}
+
+\begin{definition}[time efficiency]
+The \textbf{time efficiency} of the plan is a real number $T\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+T:=\frac BD.
+\end{equation}
+\end{definition}
+
+The time efficiency of the plan is the average benefit gain during a unit of time.
+It should be maximized to make the plan as efficient as possible,
+whose reason can be found in Section \ref{sec:goal}.
+
+According to Assumption \ref{as:time efficiency over balancing}, $T$ should be maximized before we think about how $a_x$ can be adjusted to balance the funds spent over time.
+To maximize the time efficiency, the duration of the plan is the same as the duration of the project with the largest duration ($\xi$) in the plan,
+where $\xi$ is the project with largest duration among $Z$
+\begin{equation}
+\xi:=\argmax_{x\in Z}d_x.
+\end{equation}
+Then, when $a_x$ are adjusted to minimize variance of yearly costs,
+the start time of projects with shorter duration than $d_\xi$ will never be changed to make them start before $\xi$ starts or end after $\xi$ ends
+because otherwise $D$ increases and thus makes $T$ smaller.
+Therefore, rather than the straight-forward definition shown in Section \ref{sec:duration}, there is a better definition.
+
+\begin{definition}[duration of the plan]
+The \textbf{duration of the plan} is a real number $D\in\mathbb N$ defined as
+\begin{equation}
+\label{eq:duration of the plan}
+D:=\max_{x\in Z}d_x.
+\end{equation}
+\end{definition}
+
+\subsection{Variance of yearly costs}
+\label{sec:variance of yearly costs}
+
+To measure how balanced the spent funds are distributed through time, the variance of yearly costs is defined.
+
+% TODO: assigned to Ulysses
+
+\subsection{Constraints to the plan}
+
+The only constraint to the plan is due to the limitation of funds.
+To describe the constraint, the total funds and the cost of the plan needs defining.
+
+\begin{definition}[total funds]
+The \textbf{total funds} is a real number $F\in\left[0,+\infty\right)$.
+\end{definition}
+
+\begin{definition}[cost of project]
+The \textbf{cost of project} is a real number $c_x\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+c_x:=\sum_n^\infty c_{x,n}.
+\end{equation}
+\end{definition}
+
+The sum $c_x$ must converge because starting from 
 
 % TODO: 总 funds 如何被给出，以及所选取的 projects (plan) 如何被总 funds 限制，以及为什么这么规定
 
 \subsection{The goal of the model}
+\label{sec:goal}
 
 % TODO: assigned to Ulysses
 
 \section{The approach}
 \subsection{Minimize the funds when the time efficiency maximum}
 
+% TODO: assigned to Orash
 
 \section{Pros and cons}
 Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
@@ -381,18 +496,23 @@ The cons are
 \item Con 3.
 \end{enumerate}
 
+% TODO: assigned to Orash
+
 \newpage
 
 \section{The memo}
 \label{sec:memo}
 
 Memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo.
-\section{Appendix}
+
+% TODO: assigned to Orash
+
+\section{Appendices}
+
 \newpage
 
 \begin{thebibliography}{9}
 \item Ref 1.
 \end{thebibliography}
-
 
 \end{document}

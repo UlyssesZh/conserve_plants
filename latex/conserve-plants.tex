@@ -1,0 +1,302 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\usepackage{footnote}
+\usepackage{tablefootnote}
+\usepackage{makecell}
+\usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{verbatim}
+
+\begin{comment}
+	asdfasdf
+\end{comment}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Defintion}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Page \thepage\ of \pageref{LastPage}}
+\lhead{Team \# 10751}
+
+\begin{document}
+
+\begin{center}
+Team Control Number
+
+\Huge 10751
+
+\normalsize ~
+
+Problem Chosen
+
+\Huge B
+
+\Large 2020
+
+HiMCM
+
+Summary Sheet
+\end{center}
+
+\normalsize
+
+ Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary.
+
+\newpage
+
+\tableofcontents
+
+\newpage
+\section{Introduction}
+\label{sec:intro}
+
+The decrease in biodiversity due to the extinction of endangered plants and animals is a serious problem.
+To avoid this, people need to spend money on protecting the plants and animals.
+
+However, in some places like Florida, greatly needing biodiversity conservation,
+people do not have enough money to protect all of the imperiled species there.
+They need to find out a proper scheme of funding and protecting to make full use of the funds to get as much benefit as possible.
+
+Different projects of conservation have different cost, benefit, and required time,
+as shown in the table of threatened plants data (abbreviated as TPD in the following parts of the paper).
+It is to be determined which projects are selected in the optimal plan according to these factors.
+After choosing the projects, when to start the projects should also be determined to balance the funds spent over time as possible.
+To make it clear what is going to be done, the problem is restated mathematically in Section \ref{sec:restatement}.
+The model and the method to derive the results are to be explained in Section \ref{sec:model}.
+
+We will write a non-technical memo in Section \ref{sec:memo} to give our proposal according to our model.
+
+\section{Variables}
+
+To make our model concise and straight forward, a list of factors are defined as following, as shown in Table \ref{tab:symbols}.
+
+%\begin{definition}[efficiency]
+%	The \textbf{efficiency} of a plan is defined as
+%	\begin{equation}
+%		...
+%	\end{equation}
+%\end{definition}
+%表格
+\begin{table}[h!]
+  \caption{List of symbols}
+  \label{tab:symbols}
+  \centering
+  \begin{tabular}{cccc}
+	Symbol & Domain & Unit & Definition\\
+	\hline
+	$I$ & $\mathbb N$ & year & \makecell{time spanning from the beginning of the\\ first project to the end of the last one}\\
+	$T_x$ & $\mathbb N$ & year & total time to finish project $x$\\
+	$n$ & $(0,I]\cap\mathbb Z$ & year & the index of years\\
+	$L_n$ & $(0,I]\cap\ L_n$ & year & the funds left at the end of $n^{th}$ year\\
+	$Z$ & $\mathbb N$ &  & \makecell{set that includes all the index\\of chosen project}\\
+	$k$ & $\mathbb R^+$ & dollar & initial funds\\
+	$\alpha$ & $\mathbb R^+$ & dollar/year & funds raised each year\\
+	$\sigma$ & $\mathbb R^+$ & dollar & total funds raised\\
+	$x$ & $[0,48)\cap\mathbb Z$ & & the index of projects\\
+	$B_x$ & $[0,\infty)$ & osu\tablefootnote{
+     The unit osu is invented by us to represent the unit of benefit.
+	} & benefit of project $x$\\
+	$U_x$ & $[0,1]$ & & \makecell{a measure of the uniqueness\\ of the species of project $x$}\\
+	$S_x$ & $[0,1]$ & & feasibility of success of project $x$\\
+	$E_x^{m}$ & $[0,\infty)$ & dollar & cost of project $x$ $m_x$ years after its start\\
+	$\mathbb E$ & $[0,\infty)$ & dollar & total cost of the whole plan\\
+	$e_x$ & $[0,\infty)$ & dollar & total cost of project $x$\\
+	$C_n$ & $[0,\infty)$ & dollar & total cost of all the projects in $n^th$ year\\ 
+	$F_n$ & $[0,\infty)$ & dollar & total fund after fundraising\\
+	$\varepsilon_x$ &$[0,\infty)$& osu &\makecell{effective benefit of a project \\made by the product of $B_x,U_x,S_x$}\\
+	$\zeta$ & $\mathbb R^+$ & $\SI{}{osu/(year\cdot dollar)}$ & \makecell{set that includes all indexes of projects \\that are at their first year in $n^{th}$ year} \\
+	$A_n$ & & & \makecell{set that includes all indexes of projects \\that are at their first year in the $n$th year}
+  \end{tabular}
+\end{table}
+\section{Restatement of the problem}
+\label{sec:restatement}
+
+There is a list of plant species to be protected.
+
+The conservation of each species lasts several years, with different per-year costs during the process.
+Our goal is, given a limited funding, to find out the best plan of conserving the species.
+
+\section{General assumptions}
+
+\begin{assumption}
+Funds are provided once per year, depicted by $f_n$.
+\end{assumption}
+
+\begin{assumption}
+	Conservation cannot be paused.
+\end{assumption}
+\begin{assumption}
+	Different conservations can be done simultanously and do not affect each other.
+\end{assumption}
+\begin{assumption}
+	Extra funds' last year can be saved for this year.
+\end{assumption}
+\begin{assumption}
+	The conservation plan should not change when it is ongoing.	
+\end{assumption}
+
+\section{The model}
+\label{sec:model}
+\subsection{Relationship of different variable}
+Suppose the funds raised each year is a constant $\alpha$, and the total fund raised $\sigma$ is given. Then $\sigma$ can be expressed in terms of $\alpha$:\\
+\begin{equation}
+	\label{eq:total_fund}
+	\sigma=\sum_{u=1}^I\alpha=I\alpha
+\end{equation}
+\begin{equation}
+\alpha=\frac{\sigma}{I}
+\label{eq:funds_raised_each_year}
+\end{equation}
+The total cost of a single project $x$ and $e_x$ can be expressed as:\\
+\begin{equation}
+e_x=\sum_{v=1}^{T_x}E_x^{v},(x\in{Q_i}\subset \mathbb Z)
+\end{equation}
+We also can get the total cost of the whole plan:\\
+\begin{equation}
+\mathbb E=\sum_x e_x,(x\in{Q_i}\subset \mathbb Z)
+\end{equation}
+From $(3)$, replace $e_x$ with $\sum\nolimits_{n=1}^NE_x^{v}$\\
+\begin{equation}
+\mathbb E = \sum_x{\sum_{v=1}^{T_x}E_x^{v}},(x\in{Q_i}\subset \mathbb Z)
+\end{equation}
+
+\subsection{Evaluation of various project}
+The effective benefit of a certain project $x$, $\varepsilon_x$ can be expressed as
+\begin{equation}
+\varepsilon_x={B_x}\cdot{U_x}\cdot{S_x}
+\end{equation}
+
+\par We use effective benefit $\varepsilon_x$ instead of the benefit provided in the table of Threatened Plants Data (TPD) because benefit in the TPD ignores the fact that it relies on the uniqueness of the plant species and feasibility of success. If $U_x$ equals to $0$ (there are lots of other plant species can fill in its position), there is no need to preserve it as the benefit can completely brought by other plant species. Likewise, if $S_x$ equals to $0$ (no probability to succeed at all), even highest benefit remains useless. However, in terms of $\varepsilon_x$ expression, it becomes 0 when $U_x$ or $S_x$ or both equal to 0, indicating no need for protecting this kind of plant.
+\par As can be seen in the TPD, both $U_x$ and $S_x$  are in the interval $[0,1]$. When either or both of these variables get close to $1$ (high probability and uniqueness), the benefit $B_x$ of a certain project can be fully displayed:\\
+\begin{equation}
+\varepsilon_x={B_x} \cdot {U_x} \cdot {S_x} \approx {B_x} \cdot 1 \cdot 1={B_x}
+\end{equation}
+\par Whether a plan is successful not only depends on how many species it saves or benefit it brings, but also relies on the expense and time spanning to finish it. Another variable $\zeta$ needs to be determined to further evaluate the plan. It can be expressed as:
+\begin{equation}
+\zeta=\frac{\sum_x ({B_x} \cdot {U_x} \cdot {S_x})}{\mathbb E \cdot I}(x\in{Q_i}\subset \mathbb Z)
+\end{equation}
+\par By using formula $(4)$, we can further expand it:
+\begin{equation}
+\zeta=\frac{\sum_x ({B_x} \cdot {U_x} \cdot {S_x})}{(\sum_x e_x) \cdot I}=\frac{\sum_x ({B_x} \cdot {U_x} \cdot {S_x})}{\sum_x {\sum_{v=1}^{T_x}E_x^{v}}\cdot I},(x\in{Q_i}\subset \mathbb Z)
+\end{equation}
+\par This equation is related to the time and the cost.
+When the total cost or the time span is too large, the denominator $e_x \cdot T_x$ would decrease significantly, making $\zeta$ a small figure.
+Lower number indicates less efficiency.
+$\zeta$ of the optimal plans would be greater than those of other plans.
+
+\subsection{Function and constraint}
+\par In the first year, the total fund $F_1$ after fundraising is:
+\begin{equation}
+F_1=k+\alpha
+\end{equation}
+Suppose the all the projects that would be conducted in the first year $A_1$ is given, their total cost in the first year can be expressed as:
+\begin{equation}
+C_1=\sum_{u_1}{E_{u_1}^1},(u_1 \in A_1)
+\end{equation}
+
+The total cost in the first year could not exceed the total fund raised. This constraint can be showed as:
+\begin{equation}
+F_1=k+\alpha > C_1 =\sum_{u_1}{E_{u_1}^1},(u_1 \in A_1)
+\end{equation}
+
+\par And the left fund $L_1$ is:
+\begin{equation}
+L_1=F_1-C_1=k+a-\sum_{u_1} E_{u_1}^1,(u_1 \in A_1)
+\end{equation}
+\par Second year’s fund is the combination of the fund left in the first year and the fund raised in the second year:
+\begin{equation}
+F_2=L_1+\alpha
+\end{equation}
+\par Suppose all projects initiated in the second year $A_2$ is also given, the total cost in the second year $C_2$ the combination of the cost of projects initiated in the first year and projects initiated in the second year:
+\begin{equation}
+C_2=\sum_{u_1} E_{u_1}^2+\sum_{u_2} E_{u_2}^1,(u_1\in A_1,u_2\in A_2)
+\end{equation}
+\par Also, the constraint is that the total fund in second year is greater than the total cost:
+\begin{equation}
+F_2=L_1+\alpha>C_2x```
+\end{equation}
+\par The fund left in the second year $L_2$ is:
+\begin{equation}
+L_2=F_2-C_2=L_1+\alpha-C_2=k+2\alpha-(\sum_{u_1} E_{u_1}^2+\sum_{u_2} E_{u_2}^1),(u_1\in A_1,u_2\in A_2)
+\end{equation}
+\par Based on the same principal, we can find the total cost of projects in $n^{th}$ year:
+\begin{equation}
+C_n=\sum_{u_1} E_{u_1}^{n}+\sum_{u_2} E_{u_2}^{n-1}+\cdots+\sum_{u_n} E_{u_n}^1=\sum_{i=1}^n {\sum_{u_i} E_{u_i}^{n-i+1}}
+\end{equation}
+$$(define \forall n-i+1>T_{u_i}:E_ui^{n-i+1}=0)$$
+where $(u_p\in A_p,(p=1,2,\cdots,n))$.
+And the total fund in $F_n$ can also be found:\\
+\begin{equation}
+	F_n=L_{n-1}+\alpha=F_{n-1}-C_{n-1}+\alpha=F_{n-1}-\sum_{i=1}^{n-1}\sum_{u_i} E_{u_i}^{(n-1)-i+1}+\alpha
+\end{equation}
+
+$$(u_p \in A_p,(p=1,2,\cdots,n-1))$$
+
+Through this recursion formula, we can find $F_n$ in terms of $F_1$:
+
+\begin{equation}
+\begin{split}
+	F_n&=F_{n-2}-\sum_{i=1}^{n-2} \sum_{u_i} E_{u_i}^{(n-2)-i+1}-\sum_{i=1}^{n-1} \sum_{u_i} E_{u_i}^{(n-1)-i+1}+\alpha+\alpha=F_{n-3}-\cdots+3\alpha\\
+	&=F_1-\sum_{j=1}^{n-1} \sum_{i=1}^{j}\sum_{u_i} E_{u_i}^{j-i+1}+(n-1)\alpha=k+\sum_{j=1}^{n-1} {\sum_{i=1}^{j} \sum_{u_i} E_{u_i}^{j-i+1}+n\alpha},
+\end{split}
+\end{equation}
+where $u_p \in A_p$, and $p=1,2,\cdots,n-1)$.
+
+Therefore, by using $(1)$, we can get a series of constraints:
+
+$$F_P>C_p,(p=1,2,\cdots,n)$$
+\begin{equation}
+k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\alpha>\sum_{i=1}^p {\sum_{u_i} E_{u_i}^{p-i+1}},(p=1,2,\cdots,n)
+\end{equation}
+\begin{equation}
+k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\frac{\sigma}{I}>\sum_{i=1}^p {\sum_{u_i} E_{u_i}^{p-i+1}},(p=1,2,\cdots,n)
+\end{equation}
+
+\par Under these constraints, in order to give the best plan for plant conservation, we need to find the greatest value of $\zeta$ $(9)$:
+\begin{equation}
+	\zeta = \frac{\sum_x (B_x \cdot U_x \cdot _{S_x})}{(\sum_x \sum_{v=1}^{T_x})\cdot I},(x \in {Q_i} \subset Z=\bigcup\limits_{t=1}^{n} A_t)
+\end{equation}
+
+\section{The approach}
+\subsection{Minimize the funds when the time efficiency maximum}
+
+
+\section{Pros and cons}
+Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
+The pros are
+\begin{enumerate}
+\item Pro 1.
+\item Pro 2.
+\item Pro 3.
+\end{enumerate}
+
+The cons are
+\begin{enumerate}
+\item Con 1.
+\item Con 2.
+\item Con 3.
+\end{enumerate}
+
+\newpage
+
+\section{The memo}
+\label{sec:memo}
+
+Memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo.
+\section{Appendix}
+\newpage
+
+\begin{thebibliography}{9}
+\item Ref 1.
+\end{thebibliography}
+
+
+\end{document}

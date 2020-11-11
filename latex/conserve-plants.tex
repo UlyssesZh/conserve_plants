@@ -14,12 +14,12 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{verbatim}
+\usepackage{unicode-math}
 
-\begin{comment}
-	asdfasdf
-\end{comment}
+\setmathfont{XITS Math}
+
 \newtheorem{assumption}{Assumption}
-\newtheorem{definition}{Defintion}
+\newtheorem{definition}{Definition}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -74,9 +74,12 @@ The model and the method to derive the results are to be explained in Section \r
 
 We will write a non-technical memo in Section \ref{sec:memo} to give our proposal according to our model.
 
+% TODO: assigned to Orash
+
 \section{Variables}
 
-To make our model concise and straight forward, a list of factors are defined as following, as shown in Table \ref{tab:symbols}.
+To make our model concise and straight forward, a list of symbols are defined as following, as shown in Table \ref{tab:symbols}.
+The meaning of the symbols are to be explained in detail in the rest of this article.
 
 %\begin{definition}[efficiency]
 %	The \textbf{efficiency} of a plan is defined as
@@ -92,28 +95,23 @@ To make our model concise and straight forward, a list of factors are defined as
   \begin{tabular}{cccc}
 	Symbol & Domain & Unit & Definition\\
 	\hline
-	$I$ & $\mathbb N$ & year & \makecell{time spanning from the beginning of the\\ first project to the end of the last one}\\
-	$T_x$ & $\mathbb N$ & year & total time to finish project $x$\\
-	$n$ & $(0,I]\cap\mathbb Z$ & year & the index of years\\
-	$L_n$ & $(0,I]\cap\ L_n$ & year & the funds left at the end of $n^{th}$ year\\
-	$Z$ & $\mathbb N$ &  & \makecell{set that includes all the index\\of chosen project}\\
-	$k$ & $\mathbb R^+$ & dollar & initial funds\\
-	$\alpha$ & $\mathbb R^+$ & dollar/year & funds raised each year\\
-	$\sigma$ & $\mathbb R^+$ & dollar & total funds raised\\
-	$x$ & $[0,48)\cap\mathbb Z$ & & the index of projects\\
-	$B_x$ & $[0,\infty)$ & osu\tablefootnote{
-     The unit osu is invented by us to represent the unit of benefit.
-	} & benefit of project $x$\\
-	$U_x$ & $[0,1]$ & & \makecell{a measure of the uniqueness\\ of the species of project $x$}\\
-	$S_x$ & $[0,1]$ & & feasibility of success of project $x$\\
-	$E_x^{m}$ & $[0,\infty)$ & dollar & cost of project $x$ $m_x$ years after its start\\
-	$\mathbb E$ & $[0,\infty)$ & dollar & total cost of the whole plan\\
-	$e_x$ & $[0,\infty)$ & dollar & total cost of project $x$\\
-	$C_n$ & $[0,\infty)$ & dollar & total cost of all the projects in $n^th$ year\\ 
-	$F_n$ & $[0,\infty)$ & dollar & total fund after fundraising\\
-	$\varepsilon_x$ &$[0,\infty)$& osu &\makecell{effective benefit of a project \\made by the product of $B_x,U_x,S_x$}\\
-	$\zeta$ & $\mathbb R^+$ & $\SI{}{osu/(year\cdot dollar)}$ & \makecell{set that includes all indexes of projects \\that are at their first year in $n^{th}$ year} \\
-	$A_n$ & & & \makecell{set that includes all indexes of projects \\that are at their first year in the $n$th year}
+	$x$ & $\mathbb N$ & & the index of projects\\
+	$D$ & $\mathbb Z^+$ & year & Duration of the plan\\
+	$d_x$ & $\mathbb Z^+$ & year & Duration of project $x$\\
+	$n$ & $\mathbb N$ & year & Time (index of years)\\
+	$Z$ & $\mathscr P\left(\mathbb N\right)$ & & The set of chosen projects\\
+	$F$ & $\mathbb R^+$ & dollar & Total funds\\
+	$b_x$ & $\left[0,\infty\right)$ & osu\tablefootnote{
+     The unit osu is invented to represent the unit of benefit.
+	} & Benefit of project $x$\\
+	$u_x$ & $\left[0,1\right]$ & & Taxonomic uniqueness of project $x$\\
+	$s_x$ & $\left[0,1\right]$ & & Feasibility of success of project $x$\\
+	$c_{x,n}$ & $\left[0,+\infty\right)$ & dollar & Cost of project $x$ in the $n$th year\\
+	$E$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
+	$c_x$ & $\left[0,+\infty\right)$ & dollar & Total cost of project $x$\\
+	$C_n$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan in the $n$th year\\
+	$\beta_x$ &$\left[0,+\infty\right)$& osu & Effective benefit of project $x$\\
+	$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan
   \end{tabular}
 \end{table}
 \section{Restatement of the problem}
@@ -123,6 +121,8 @@ There is a list of plant species to be protected.
 
 The conservation of each species lasts several years, with different per-year costs during the process.
 Our goal is, given a limited funding, to find out the best plan of conserving the species.
+
+% TODO: assigned to Stephen
 
 \section{General assumptions}
 
@@ -143,8 +143,12 @@ Funds are provided once per year, depicted by $f_n$.
 	The conservation plan should not change when it is ongoing.	
 \end{assumption}
 
+% TODO: assigned to Orash
+
 \section{The model}
 \label{sec:model}
+
+\begin{comment}
 \subsection{Relationship of different variable}
 Suppose the funds raised each year is a constant $\alpha$, and the total fund raised $\sigma$ is given. Then $\sigma$ can be expressed in terms of $\alpha$:\\
 \begin{equation}
@@ -169,15 +173,15 @@ From $(3)$, replace $e_x$ with $\sum\nolimits_{n=1}^NE_x^{v}$\\
 \end{equation}
 
 \subsection{Evaluation of various project}
-The effective benefit of a certain project $x$, $\varepsilon_x$ can be expressed as
+The effective benefit of a certain project $x$, $\beta_x$ can be expressed as
 \begin{equation}
-\varepsilon_x={B_x}\cdot{U_x}\cdot{S_x}
+\beta_x={B_x}\cdot{U_x}\cdot{S_x}
 \end{equation}
 
-\par We use effective benefit $\varepsilon_x$ instead of the benefit provided in the table of Threatened Plants Data (TPD) because benefit in the TPD ignores the fact that it relies on the uniqueness of the plant species and feasibility of success. If $U_x$ equals to $0$ (there are lots of other plant species can fill in its position), there is no need to preserve it as the benefit can completely brought by other plant species. Likewise, if $S_x$ equals to $0$ (no probability to succeed at all), even highest benefit remains useless. However, in terms of $\varepsilon_x$ expression, it becomes 0 when $U_x$ or $S_x$ or both equal to 0, indicating no need for protecting this kind of plant.
+\par We use effective benefit $\beta_x$ instead of the benefit provided in the table of Threatened Plants Data (TPD) because benefit in the TPD ignores the fact that it relies on the uniqueness of the plant species and feasibility of success. If $U_x$ equals to $0$ (there are lots of other plant species can fill in its position), there is no need to preserve it as the benefit can completely brought by other plant species. Likewise, if $S_x$ equals to $0$ (no probability to succeed at all), even highest benefit remains useless. However, in terms of $\beta_x$ expression, it becomes 0 when $U_x$ or $S_x$ or both equal to 0, indicating no need for protecting this kind of plant.
 \par As can be seen in the TPD, both $U_x$ and $S_x$  are in the interval $[0,1]$. When either or both of these variables get close to $1$ (high probability and uniqueness), the benefit $B_x$ of a certain project can be fully displayed:\\
 \begin{equation}
-\varepsilon_x={B_x} \cdot {U_x} \cdot {S_x} \approx {B_x} \cdot 1 \cdot 1={B_x}
+\beta_x={B_x} \cdot {U_x} \cdot {S_x} \approx {B_x} \cdot 1 \cdot 1={B_x}
 \end{equation}
 \par Whether a plan is successful not only depends on how many species it saves or benefit it brings, but also relies on the expense and time spanning to finish it. Another variable $\zeta$ needs to be determined to further evaluate the plan. It can be expressed as:
 \begin{equation}
@@ -264,6 +268,94 @@ k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\frac{\sigma}{I}>\
 \begin{equation}
 	\zeta = \frac{\sum_x (B_x \cdot U_x \cdot _{S_x})}{(\sum_x \sum_{v=1}^{T_x})\cdot I},(x \in {Q_i} \subset Z=\bigcup\limits_{t=1}^{n} A_t)
 \end{equation}
+\end{comment}
+
+\subsection{Raw attributes of projects}
+
+The word \textbf{project} is used to represent a conservation of a certain species of plant.
+In this article, the symbol $x$ is used to number and denote a project.
+Note that in this article, all numberings
+(like $x$ here numbering the projects, and $n$ later numbering the years)
+start with $0$ instead of $1$ to meet the convention in computer science.
+
+According to the TPD, there are some \textbf{raw datas} attributed to a project $x$, which are
+the \textbf{unique id}, the \textbf{taxonomic uniqueness} $u_x$, the \textbf{feasibility of success} $s_x$, the \textbf{cost} $c_{x,n}$ of the $n$th year.
+
+To make the concepts more clear and make it easy to use them later,
+although the meanings of the raw datas are described in the TPD,
+their meanings should be re-described in a mathematical way.
+
+\begin{definition}[benefit]
+The \textbf{benefit} of a project is a real number $b_x\in\left[0,+\infty\right)$.
+\end{definition}
+
+The benefit is an important indicator indicating how imperiled the species is and how easy the project can be done.
+However, $b_x$ cannot be directly used to measure how much can we benefit from finishing the project.
+Another derived concept called \textbf{effective benefit} should be used instead, as explained in Section \ref{sec:effective benefit}.
+
+\begin{definition}[taxonomic uniqueness]
+The \textbf{taxonomic uniqueness} of a project is a real number $u_x\in\left[0,1\right]$.
+\end{definition}
+
+The taxonomic uniqueness is a measure of how the species is unique from other species.
+It is stipulated that $u_x=0$ if there exists a species that is exactly the same as the species conserved in project $x$,
+and $u_x=1$ if the species conserved in project $x$ does not have any similarities with any other species.
+
+\begin{definition}[feasibility of success]
+The \textbf{feasibility of success} of a project is a real number $s_x\in\left[0,1\right]$.
+\end{definition}
+
+The feasibility of success is the probability of the success of the project.
+
+\subsection{Constraints to the plan}
+
+The word \textbf{plan} is used to represent how the projects are going to be executed,
+including which projects are executed and when should they start.
+
+% TODO: assigned to Ulysses
+
+\subsection{Effective benefit}
+\label{sec:effective benefit}
+
+Although $b_x$ is defined for a project, hardly can a project lead to so much benefit finally.
+A new concept should be defined to describe how much can people actually benefit from finishing the project.
+
+\begin{definition}
+The \textbf{effective benefit} of a project is a real number $\beta_x\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+\label{eq:effective benefit}
+\beta_x:=b_xu_xs_x.
+\end{equation}
+\end{definition}
+
+Here is the explanation of why the effective benefit should be defined as Equation \ref{eq:effective benefit}.
+
+First, consider the effect of $u_x$.
+If $u_x=0$, which means there is a species the same as the conserved species,
+the conservation is useless because even if the conserved species die out, there are other species taking the place.
+If $u_x=1$, which means there are no similar species to the conserved species,
+the conservation is meaningful and can exert full benefit.
+From these two cases, it is reasonable to multiply $b_x$ with $u_x$,
+which means $u_x$ represents the portion of $b_x$ that can be exerted if the project is successfully finished.
+
+Then, consider the effect of $s_x$.
+It is a probability, so the effect should be considered statistically.
+Imagine there are many parallel universes, in each of which project $x$ is carried out under the same condition.
+According to the law of large numbers, the portion of successful executions is the probability $s_x$, exerting the benefit,
+while the rest does not make any benefit.
+Then, the mean of all the benefits is $s_x\cdot b_x+\left(1-s_x\right)\cdot0=b_xs_x$.
+
+Combining the two effects above, the formula for effective benefit (Equation \ref{eq:effective benefit}) can be derived.
+
+From now on, when measuring how much can a project benefit people,
+$\beta_x$ is used instead of $b_x$.
+
+
+% TODO: 总 funds 如何被给出，以及所选取的 projects (plan) 如何被总 funds 限制，以及为什么这么规定
+
+\subsection{The goal of the model}
+
+% TODO: assigned to Ulysses
 
 \section{The approach}
 \subsection{Minimize the funds when the time efficiency maximum}

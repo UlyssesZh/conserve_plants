@@ -9,7 +9,7 @@
 \usepackage{footnote}
 \usepackage{tablefootnote}
 \usepackage{makecell}
-\usepackage[a4paper, total={7in, 10in}]{geometry}
+% \usepackage[a4paper, total={7in, 10in}]{geometry}
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{array}
@@ -106,7 +106,7 @@ The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
   \label{tab:symbols}
   \centering
   \begin{tabular}{cccc}
-	Symbol & Domain & Unit & Definition\\
+	Symbol & Domain & Unit & Meaning\\
 	\hline
 	$x$ & $\mathbb N$ & & The index of projects\\
 	$D$ & $\mathbb N$ & year & Duration of the plan\\
@@ -120,13 +120,13 @@ The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
 	$u_x$ & $\left[0,1\right]$ & & Taxonomic uniqueness of project $x$\\
 	$s_x$ & $\left[0,1\right]$ & & Feasibility of success of project $x$\\
 	$c_{x,n}$ & $\left[0,+\infty\right)$ & dollar & Cost of project $x$ in the $n$th year\\
-	$E$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
-	$c_x$ & $\left[0,+\infty\right)$ & dollar & Total cost of project $x$\\
-	$C_n$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan in the $n$th year\\
+	$c_x$ & $\left[0,+\infty\right)$ & dollar/year & Total cost of project $x$\\
+	$C_n$ & $\left[0,+\infty\right)$ & dollar/year & Cost of the plan in the $n$th year\\
+	$C$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
 	$\beta_x$ & $\left[0,+\infty\right)$ & osu & Effective benefit of project $x$\\
 	$B$ & $\left[0,+\infty\right)$ & osu & Total effective benefit of the plan\\
 	$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan\\
-	$\xi$ & $\mathbb N$ & & The project with longest duration in the plan\\
+	$\xi$ & $\mathbb N$ & & The longest project in the plan\\
 	$a_x$ & $\mathbb N$ & year & When project $x$ starts
   \end{tabular}
 \end{table}
@@ -146,10 +146,14 @@ The most suitable plan we need to find out should include all variables mentione
 
 % TODO: assigned to Stephen
 
+The mathematical description of the problem is given in Section \ref{sec:model}.
+To be specific, the problem is to reach the goal described in Section \ref{sec:goal} under the constraints described in Section \ref{sec:constraints}.
+
 \section{General assumptions}
 
 \begin{assumption}
-Funds are provided once per year, depicted by $f_n$.
+\label{as:funds at one time}
+The funds are provided off at one time.
 \end{assumption}
 
 \begin{assumption}
@@ -443,14 +447,68 @@ D:=\max_{x\in Z}d_x.
 \end{equation}
 \end{definition}
 
+It is obvious that, if $C$ stays the same, the larger $T$ is, the better the plan is.
+In fact, maximizing $T$ is of the most priority.
+It may be surprising that the most prior goal is not maximizing $\frac TC$, which is more intuitive.
+We do not try to maximize $\frac TC$ because if we did that,
+it would lead to a trivial result:
+the plan only contains one project with the minimum $\frac{\varepsilon_x}{d_xc_x}$, which is not what we want to see.
+
+\begin{proof}
+Without loss of generality, assume that there are only $2$ plant candidates for the plan,
+and then the mathematical induction can be used to generalize the conclusion to any number of plant candidates.
+
+Without loss of generality, assume that $d_0\le d_1$, which means $D=d_1\ge d_0$.
+
+Case 1: $\frac{\varepsilon_0}{c_0}\le\frac{\varepsilon_1}{c_1}$.
+
+In this case,
+\begin{equation*}
+\frac{\varepsilon_0}{c_0}\le\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\le\frac{\varepsilon_1}{c_1}.
+\end{equation*}
+Thus, if the plan consists of both the $2$ projects,
+\begin{equation*}
+\frac TC=\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\cdot\frac1{d_1}\le\frac{\varepsilon_1}{c_1d_1}.
+\end{equation*}
+Therefore, the plan consisting of only project $1$ is better than that of both projects.
+
+Case 2: $\frac{\varepsilon_0}{c_0}>\frac{\varepsilon_1}{c_1}$.
+
+Similarly to case 1, in this case,
+\begin{equation*}
+\frac{\varepsilon_0}{c_0}>\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}>\frac{\varepsilon_1}{c_1}.
+\end{equation*}
+Thus, if the plan consists of both the $2$ projects,
+\begin{equation*}
+\frac TC=\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\cdot\frac1{d_1}<\frac{\varepsilon_0}{c_0d_1}\le\frac{\varepsilon_0}{c_0d_0}.
+\end{equation*}
+Therefore, the plan consisting of only project $0$ is better than that of both projects.
+
+From the $2$ cases above, it can be derived that there always exists a plan with single project having the largest $\frac TC$ compared to any other plan.
+\end{proof}
+
 \subsection{Variance of yearly costs}
 \label{sec:variance of yearly costs}
 
-To measure how balanced the spent funds are distributed through time, the variance of yearly costs is defined.
+To measure how balanced the spent funds are distributed through time, the variance of yearly costs $\var_n^DC_n$ is defined.
+In Section \ref{sec:goal}, it is going to be minimized to balance the funds spent over time.
 
-% TODO: assigned to Ulysses
+It can be proved that minimizing $\var_n^DC_n$ is the same as minimizing $\sum_n^DC_n^2$.
+
+\begin{proof}
+In this proof, symbol $\sim$ denotes that two expressions have the same monotonicity.
+\begin{align*}
+\var_n^DC_n&=\frac1D\sum_n^D\left(C_n-\frac CD\right)^2\\
+&\sim\sum_n^D\left(C_n^2-\frac{2C}DC_n+\frac{C^2}{D^2}\right)\\
+&=\sum_n^DC_n^2-\frac{2C}D\sum_n^DC_n+\sum_n^D\frac{C^2}{D^2}\\
+&=\sum_n^DC_n^2-\frac{C^2}D\\
+&\sim\sum_n^DC_n^2.
+\end{align*}
+Thus, minimizing $\var_n^DC_n$ is the same as minimizing $\sum_n^DC_n^2$.
+\end{proof}
 
 \subsection{Constraints to the plan}
+\label{sec:constraints}
 
 The only constraint to the plan is due to the limitation of funds.
 To describe the constraint, the total funds and the cost of the plan needs defining.
@@ -466,12 +524,32 @@ c_x:=\sum_n^\infty c_{x,n}.
 \end{equation}
 \end{definition}
 
-The sum $c_x$ must converge because starting from 
+The sum $c_x$ must converge because all terms following the $d_x$th term are $0$.
+
+\begin{definition}[cost of the plan]
+The \textbf{cost of the plan} is a real number $C\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+C:=\sum_{x\in Z}c_x.
+\end{equation}
+\end{definition}
+
+Due to Assumption \ref{as:funds at one time}, the constraint should be
+\begin{equation}
+\label{eq:constraint}
+C\le F.
+\end{equation}
 
 % TODO: 总 funds 如何被给出，以及所选取的 projects (plan) 如何被总 funds 限制，以及为什么这么规定
 
 \subsection{The goal of the model}
 \label{sec:goal}
+
+The goal of the model is to
+\begin{enumerate}
+\item Choose proper projects to make the plan have the maximum $T$,
+\item Decide the minimum funds to be raised to satisfy step 1 and the constraint (Equation \ref{eq:constraint}),
+\item Decide the start time for each chosen project in step 1 to minimize the variance of yearly costs of the plan.
+\end{enumerate}
 
 % TODO: assigned to Ulysses
 

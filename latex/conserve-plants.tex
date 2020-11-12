@@ -10,7 +10,7 @@
 \usepackage{footnote}
 \usepackage{tablefootnote}
 \usepackage{makecell}
-% \usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage[a4paper, total={7in, 10in}]{geometry}
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{array}
@@ -117,6 +117,9 @@ Note that in this article, all numberings
 start with $0$ instead of $1$ to meet the convention in computer science.
 
 The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
+Similar notation is used for other operators like $\prod$, $\var$, and so on.
+
+If $X$ is a variable related to the plan, $X^*$ denotes the actual value of the variable in the final optimal plan.
 
 %\begin{definition}[efficiency]
 %	The \textbf{efficiency} of a plan is defined as
@@ -126,33 +129,35 @@ The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
 %\end{definition}
 %表格
 \begin{table}[h!]
-  \caption{List of symbols}
-  \label{tab:symbols}
-  \centering
-  \begin{tabular}{cccc}
-	Symbol & Domain & Unit & Meaning\\
-	\hline
-	$x$ & $\mathbb N$ & & The index of projects\\
-	$D$ & $\mathbb N$ & year & Duration of the plan\\
-	$d_x$ & $\mathbb N$ & year & Duration of project $x$\\
-	$n$ & $\mathbb N$ & year & Time (index of years)\\
-	$Z$ & $\mathscr P\left(\mathbb N\right)$ & & The set of chosen projects\\
-	$F$ & $\left[0,+\infty\right)$ & dollar & Total funds\\
-	$b_x$ & $\left[0,+\infty\right)$ & osu\tablefootnote{
-     The unit osu is invented to represent the unit of benefit.
-	} & Benefit of project $x$\\
-	$u_x$ & $\left[0,1\right]$ & & Taxonomic uniqueness of project $x$\\
-	$s_x$ & $\left[0,1\right]$ & & Feasibility of success of project $x$\\
-	$c_{x,n}$ & $\left[0,+\infty\right)$ & dollar & Cost of project $x$ in the $n$th year\\
-	$c_x$ & $\left[0,+\infty\right)$ & dollar/year & Total cost of project $x$\\
-	$C_n$ & $\left[0,+\infty\right)$ & dollar/year & Cost of the plan in the $n$th year\\
-	$C$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
-	$\beta_x$ & $\left[0,+\infty\right)$ & osu & Effective benefit of project $x$\\
-	$B$ & $\left[0,+\infty\right)$ & osu & Total effective benefit of the plan\\
-	$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan\\
-	$\xi$ & $\mathbb N$ & & The longest project in the plan\\
-	$a_x$ & $\mathbb N$ & year & When project $x$ starts
-  \end{tabular}
+\caption{List of symbols}
+\label{tab:symbols}
+\centering
+\begin{tabular}{cccc}
+\toprule
+Symbol & Domain & Unit & Meaning\\
+\midrule
+$x$ & $\mathbb N$ & & The index of projects\\
+$D$ & $\mathbb N$ & year & Duration of the plan\\
+$d_x$ & $\mathbb N$ & year & Duration of project $x$\\
+$n$ & $\mathbb N$ & year & Time (index of years)\\
+$Z$ & $\mathscr P\left(\mathbb N\right)$ & & The set of chosen projects\\
+$F$ & $\left[0,+\infty\right)$ & dollar & Total funds\\
+$b_x$ & $\left[0,+\infty\right)$ & osu\tablefootnote{
+   The unit osu is invented to represent the unit of benefit.
+} & Benefit of project $x$\\
+$u_x$ & $\left[0,1\right]$ & & Taxonomic uniqueness of project $x$\\
+$s_x$ & $\left[0,1\right]$ & & Feasibility of success of project $x$\\
+$c_{x,n}$ & $\left[0,+\infty\right)$ & dollar & Cost of project $x$ in the $n$th year\\
+$c_x$ & $\left[0,+\infty\right)$ & dollar/year & Total cost of project $x$\\
+$C_n$ & $\left[0,+\infty\right)$ & dollar/year & Cost of the plan in the $n$th year\\
+$C$ & $\left[0,+\infty\right)$ & dollar & Cost of the plan\\
+$\beta_x$ & $\left[0,+\infty\right)$ & osu & Effective benefit of project $x$\\
+$B$ & $\left[0,+\infty\right)$ & osu & Total effective benefit of the plan\\
+$T$ & $\left[0,+\infty\right)$ & osu/year & Time efficiency of the plan\\
+$\xi$ & $\mathbb N$ & & The longest project in the plan\\
+$a_x$ & $\mathbb N$ & year & When project $x$ starts\\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \section{General assumptions}
@@ -501,13 +506,13 @@ The yearly cost in the $n$th year of the plan is the sum of the costs of the pro
 It should take into account the different start time of the projects.
 
 \begin{definition}[start time]
-The \textbf{start time} of project $x$ is a real number $s_x\in\mathbb N$.
+The \textbf{start time} of project $x$ is a real number $a_x\in\mathbb N$.
 \end{definition}
 
 \begin{definition}[yearly costs]
 The \textbf{yearly cost} of the plan in the $n$th year is a real number $C_n\in\left[0,+\infty\right)$ defined as
 \begin{equation}
-C_n:=\sum_{x\in Z}c_{x,n-s_x}.
+C_n:=\sum_{x\in Z}c_{x,n-a_x}.
 \end{equation}
 \end{definition}
 
@@ -560,12 +565,12 @@ Due to Assumption \ref{as:funds at one time}, the constraint should be
 C\le F.
 \end{equation}
 
-There are also constraints resulting from the restrictions for $s_x$ due to the optimization of $T$.
+There are also constraints resulting from the restrictions for $a_x$ due to the optimization of $T$.
 According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or end after the longest project end.
 Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time
 \begin{equation}
 \label{eq:start time constraint}
-\forall x\in Z:s_x\in\left[0,D-d_x\right).
+\forall x\in Z:a_x\in\left[0,D-d_x\right).
 \end{equation}
 
 \subsection{The goal of the model}
@@ -575,7 +580,7 @@ The goal of the model is to
 \begin{enumerate}
 \item Decide proper $Z$ to make the plan have the maximum $T$,
 \item Decide the minimum $F$ to satisfy step 1 under the constraint Equation \ref{eq:constraint},
-\item Decide the $s_x$ for each chosen project in step 1 to minimize $\var_n^DC_n$ under the constraint Equation \ref{eq:start time constraint}.
+\item Decide the $a_x$ for each chosen project in step 1 to minimize $\var_n^DC_n$ under the constraint Equation \ref{eq:start time constraint}.
 \end{enumerate}
 
 In this way, the derived plan can meet the requirements described in Section \ref{sec:restatement}.
@@ -613,74 +618,139 @@ The cons are
 \section{The memo}
 \label{sec:memo}
 
-\begin{table}
+Table \ref{tab:schedule} shows the schedule of the optimal plan.
+The $n$th column denotes the $n$th year.
+The last row sums the costs of the projects, representing the fundraising schedule.
+
+The total cost of the plan is \$11010118.27.
+
+\begin{table}[h!]
 \centering
 \caption{Schedule of executing the projects}
 \label{tab:schedule}
-\begin{tabular}{c||c|c|c|c|c}
-Year & $0$ & $1$ & $2$ & $3$ & $4$\\
+\begin{tabular}{|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|}
 \hline
-& & & \multicolumn{3}{c}{1-Flowering Plants-502}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-436}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-536}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-183}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-480}\\
-& & \multicolumn{4}{c}{1-Flowering Plants-135}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-481}\\
-& \multicolumn{5}{c}{1-Flowering Plants-176}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-475}\\
-& \multicolumn{5}{c}{1-Flowering Plants-546}\\
-& \multicolumn{5}{c}{1-Flowering Plants-558}\\
-& \multicolumn{5}{c}{1-Flowering Plants-553}\\
-& \multicolumn{5}{c}{1-Flowering Plants-442}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-537}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-548}\\
-& \multicolumn{5}{c}{1-Flowering Plants-426}\\
-& \multicolumn{5}{c}{1-Flowering Plants-452}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-455}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-133}\\
-& \multicolumn{5}{c}{1-Flowering Plants-168}\\
-& \multicolumn{5}{c}{1-Flowering Plants-476}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-137}\\
-& \multicolumn{5}{c}{1-Flowering Plants-485}\\
-& \multicolumn{5}{c}{1-Flowering Plants-528}\\
-& \multicolumn{5}{c}{1-Flowering Plants-520}\\
-& \multicolumn{5}{c}{1-Flowering Plants-514}\\
-& \multicolumn{5}{c}{1-Flowering Plants-517}\\
-& & & \multicolumn{3}{c}{1-Flowering Plants-529}\\
-& \multicolumn{5}{c}{1-Flowering Plants-557}\\
-& \multicolumn{5}{c}{1-Flowering Plants-179}\\
-& \multicolumn{5}{c}{1-Flowering Plants-530}\\
-& \multicolumn{5}{c}{1-Flowering Plants-440}\\
-& \multicolumn{5}{c}{1-Flowering Plants-513}\\
-& \multicolumn{5}{c}{1-Flowering Plants-524}\\
-& \multicolumn{5}{c}{1-Flowering Plants-508}\\
-& \multicolumn{5}{c}{1-Lichens-567}\\
+$0$ & $1$ & $2$ & $3$ & $4$\\
+\hline\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-502}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-436}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-536}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-183}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-480}\\\hline
+& \multicolumn{4}{c|}{1-Flowering Plants-135}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-481}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-176}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-475}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-546}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-558}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-553}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-442}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-537}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-548}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-426}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-452}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-455}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-133}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-168}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-476}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-137}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-485}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-528}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-520}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-514}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-517}\\\hline
+& & \multicolumn{3}{c|}{1-Flowering Plants-529}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-557}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-179}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-530}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-440}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-513}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-524}\\\hline
+\multicolumn{5}{|c|}{1-Flowering Plants-508}\\\hline
+\multicolumn{5}{|c|}{1-Lichens-567}\\\hline
 \hline
-Yearly cost & a & b & c & d & e
+\$2600492.21 & \$2555863.21 & \$3024886.35 & \$1488407.44 & \$1340469.06\\
+\hline
 \end{tabular}
 \end{table}
 
 \newpage
 
-\section{Appendices}
+\appendix
 
-\subsection{The program used to decide $Z$}
+\section{The program used to decide $Z$}
 \label{appendix:prog min T}
 
 \inputminted{ruby}{../knappack.rb}
 
 The \mintinline{text}{plant.rb} file defines the data structure of a plant and imports the constant \mintinline{ruby}{TPD}.
 
-\subsection{The program used to decide start time}
+\section{The program used to decide $\left\{a_x\right\}$}
 
 \inputminted{ruby}{../min_variance.rb}
 
-\subsection{The program used to plot the graph of max $T$ related to $F$}
+\section{The program used to plot the graph of max $T$ related to $F$}
 
 \inputminted{python}{../plot.py}
 
 The program reads the result of the program in Appendix \ref{appendix:prog min T}.
+
+\section{Table of max $T$ related to $F$ for $F<F^*$}
+
+If $F$ is given, under the constraints given by Equation \ref{eq:constraint}, $T$ can be maximized by properly deciding $Z$.
+The max $T$ related to $F$ for $F<F^*$ is given in Table \ref{tab:max T funds}.
+For $F\ge F^*$, max $T$ is the same as $T^*$.
+Data in Table \ref{tab:max T funds} are calculated by the program in Appendix \ref{appendix:prog min T}.
+
+\begin{table}[h!]
+\centering
+\caption{Table of max $T$ related to $F$ before $T$ is maximized}
+\label{tab:max T funds}
+\begin{tabular}{cc}
+\toprule
+$F$ & max $T$\\
+\midrule
+\$0.00 & 0.00\\
+\$300000.00 & 435567.00\\
+\$600000.00 & 622541.67\\
+\$900000.00 & 727932.67\\
+\$1200000.00 & 810146.67\\
+\$1500000.00 & 878511.67\\
+\$1800000.00 & 909344.67\\
+\$2100000.00 & 937911.67\\
+\$2400000.00 & 937911.67\\
+\$2700000.00 & 937911.67\\
+\$3000000.00 & 957915.40\\
+\$3300000.00 & 1010095.00\\
+\$3600000.00 & 1058935.00\\
+\$3900000.00 & 1111114.60\\
+\$4200000.00 & 1160443.00\\
+\$4500000.00 & 1203976.60\\
+\$4800000.00 & 1253305.00\\
+\$5100000.00 & 1291070.20\\
+\$5400000.00 & 1328921.20\\
+\$5700000.00 & 1373425.00\\
+\$6000000.00 & 1403508.00\\
+\$6300000.00 & 1430026.80\\
+\$6600000.00 & 1456288.20\\
+\$6900000.00 & 1473947.80\\
+\$7200000.00 & 1497505.20\\
+\$7500000.00 & 1522926.40\\
+\$7800000.00 & 1533631.60\\
+\$8100000.00 & 1556091.40\\
+\$8400000.00 & 1571313.80\\
+\$8700000.00 & 1590420.80\\
+\$9000000.00 & 1603152.20\\
+\$9300000.00 & 1622259.20\\
+\$9600000.00 & 1622259.20\\
+\$9900000.00 & 1622259.20\\
+\$10200000.00 & 1628825.20\\
+\$10500000.00 & 1631451.60\\
+\$10800000.00 & 1631451.60\\
+\$11100000.00 & 1638017.60\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \newpage
 

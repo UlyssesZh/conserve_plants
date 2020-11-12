@@ -1,3 +1,4 @@
+% !TEX options=-shell-escape
 \documentclass{article}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
@@ -15,12 +16,16 @@
 \usepackage{array}
 \usepackage{verbatim}
 \usepackage{unicode-math}
+\usepackage{minted}
+\usepackage{booktabs}
 
 \setmathfont{XITS Math}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\var}{Var}
+
+\setminted{breaklines,tabsize=2}
 
 \newtheorem{assumption}{Assumption}
 \newtheorem{definition}{Definition}
@@ -80,6 +85,25 @@ We will write a non-technical memo in Section \ref{sec:memo} to give our proposa
 
 % TODO: assigned to Orash
 
+\section{Restatement of the problem}
+\label{sec:restatement}
+
+In Florida, many plant species are facing the challenge of extinction.
+Various plant conservation projects with different budgets and timelines are now being conducted to resolve this problem.
+However, one major issue is that funds mainly from the annual fundraising are not sufficient to support all projects.
+Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their fund.
+What's notable is that the final goal of this plan is not to simply save as many as plant species as possible.
+Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
+The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of another plant dying out shall decrease, finally leading to less benefit.
+Another factor is the funds spent on these projects.
+Obviously, a project with median benefit but high expense doesn't fit.
+The most suitable plan we need to find out should include all variables mentioned and give the best result.
+
+% TODO: assigned to Stephen
+
+The mathematical description of the problem is given in Section \ref{sec:model}.
+To be specific, the problem is to reach the goal described in Section \ref{sec:goal}.
+
 \section{List of symbols}
 
 To make our model concise and straight forward, a list of symbols are defined as following, as shown in Table \ref{tab:symbols}.
@@ -130,24 +154,6 @@ The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
 	$a_x$ & $\mathbb N$ & year & When project $x$ starts
   \end{tabular}
 \end{table}
-\section{Restatement of the problem}
-\label{sec:restatement}
-
-In Florida, many plant species are facing the challenge of extinction.
-Various plant conservation projects with different budgets and timelines are now being conducted to resolve this problem.
-However, one major issue is that funds mainly from the annual fundraising are not sufficient to support all projects.
-Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their fund.
-What's notable is that the final goal of this plan is not to simply save as many as plant species as possible.
-Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
-The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of conserving another shall decrease, finally leading to less benefit.
-Another factor is the funds spent on these projects.
-Obviously, a project with median benefit but high expense doesn't fit.
-The most suitable plan we need to find out should include all variables mentioned and give the best result.
-
-% TODO: assigned to Stephen
-
-The mathematical description of the problem is given in Section \ref{sec:model}.
-To be specific, the problem is to reach the goal described in Section \ref{sec:goal} under the constraints described in Section \ref{sec:constraints}.
 
 \section{General assumptions}
 
@@ -447,12 +453,12 @@ D:=\max_{x\in Z}d_x.
 \end{equation}
 \end{definition}
 
-It is obvious that, if $C$ stays the same, the larger $T$ is, the better the plan is.
+It is obvious that if $C$ stays the same, the larger $T$ is, the better the plan is.
 In fact, maximizing $T$ is of the most priority.
 It may be surprising that the most prior goal is not maximizing $\frac TC$, which is more intuitive.
 We do not try to maximize $\frac TC$ because if we did that,
 it would lead to a trivial result:
-the plan only contains one project with the minimum $\frac{\varepsilon_x}{d_xc_x}$, which is not what we want to see.
+the plan only contains one project with the minimum $\frac{\beta_x}{d_xc_x}$, which is not what we want to see.
 
 \begin{proof}
 Without loss of generality, assume that there are only $2$ plant candidates for the plan,
@@ -460,27 +466,27 @@ and then the mathematical induction can be used to generalize the conclusion to 
 
 Without loss of generality, assume that $d_0\le d_1$, which means $D=d_1\ge d_0$.
 
-Case 1: $\frac{\varepsilon_0}{c_0}\le\frac{\varepsilon_1}{c_1}$.
+Case 1: $\frac{\beta_0}{c_0}\le\frac{\beta_1}{c_1}$.
 
 In this case,
 \begin{equation*}
-\frac{\varepsilon_0}{c_0}\le\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\le\frac{\varepsilon_1}{c_1}.
+\frac{\beta_0}{c_0}\le\frac{\beta_0+\beta_1}{c_0+c_1}\le\frac{\beta_1}{c_1}.
 \end{equation*}
 Thus, if the plan consists of both the $2$ projects,
 \begin{equation*}
-\frac TC=\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\cdot\frac1{d_1}\le\frac{\varepsilon_1}{c_1d_1}.
+\frac TC=\frac{\beta_0+\beta_1}{c_0+c_1}\cdot\frac1{d_1}\le\frac{\beta_1}{c_1d_1}.
 \end{equation*}
 Therefore, the plan consisting of only project $1$ is better than that of both projects.
 
-Case 2: $\frac{\varepsilon_0}{c_0}>\frac{\varepsilon_1}{c_1}$.
+Case 2: $\frac{\beta_0}{c_0}>\frac{\beta_1}{c_1}$.
 
 Similarly to case 1, in this case,
 \begin{equation*}
-\frac{\varepsilon_0}{c_0}>\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}>\frac{\varepsilon_1}{c_1}.
+\frac{\beta_0}{c_0}>\frac{\beta_0+\beta_1}{c_0+c_1}>\frac{\beta_1}{c_1}.
 \end{equation*}
 Thus, if the plan consists of both the $2$ projects,
 \begin{equation*}
-\frac TC=\frac{\varepsilon_0+\varepsilon_1}{c_0+c_1}\cdot\frac1{d_1}<\frac{\varepsilon_0}{c_0d_1}\le\frac{\varepsilon_0}{c_0d_0}.
+\frac TC=\frac{\beta_0+\beta_1}{c_0+c_1}\cdot\frac1{d_1}<\frac{\beta_0}{c_0d_1}\le\frac{\beta_0}{c_0d_0}.
 \end{equation*}
 Therefore, the plan consisting of only project $0$ is better than that of both projects.
 
@@ -490,13 +496,28 @@ From the $2$ cases above, it can be derived that there always exists a plan with
 \subsection{Variance of yearly costs}
 \label{sec:variance of yearly costs}
 
+First, yearly costs need defining.
+The yearly cost in the $n$th year of the plan is the sum of the costs of the projects in the $n$th year.
+It should take into account the different start time of the projects.
+
+\begin{definition}[start time]
+The \textbf{start time} of project $x$ is a real number $s_x\in\mathbb N$.
+\end{definition}
+
+\begin{definition}[yearly costs]
+The \textbf{yearly cost} of the plan in the $n$th year is a real number $C_n\in\left[0,+\infty\right)$ defined as
+\begin{equation}
+C_n:=\sum_{x\in Z}c_{x,n-s_x}.
+\end{equation}
+\end{definition}
+
 To measure how balanced the spent funds are distributed through time, the variance of yearly costs $\var_n^DC_n$ is defined.
 In Section \ref{sec:goal}, it is going to be minimized to balance the funds spent over time.
 
 It can be proved that minimizing $\var_n^DC_n$ is the same as minimizing $\sum_n^DC_n^2$.
 
 \begin{proof}
-In this proof, symbol $\sim$ denotes that two expressions have the same monotonicity.
+In this proof, symbol ``$\sim$'' denotes that two expressions have the same monotonicity.
 \begin{align*}
 \var_n^DC_n&=\frac1D\sum_n^D\left(C_n-\frac CD\right)^2\\
 &\sim\sum_n^D\left(C_n^2-\frac{2C}DC_n+\frac{C^2}{D^2}\right)\\
@@ -510,7 +531,7 @@ Thus, minimizing $\var_n^DC_n$ is the same as minimizing $\sum_n^DC_n^2$.
 \subsection{Constraints to the plan}
 \label{sec:constraints}
 
-The only constraint to the plan is due to the limitation of funds.
+First, consider the constraint due to the limitation of funds.
 To describe the constraint, the total funds and the cost of the plan needs defining.
 
 \begin{definition}[total funds]
@@ -539,21 +560,32 @@ Due to Assumption \ref{as:funds at one time}, the constraint should be
 C\le F.
 \end{equation}
 
-% TODO: 总 funds 如何被给出，以及所选取的 projects (plan) 如何被总 funds 限制，以及为什么这么规定
+There are also constraints resulting from the restrictions for $s_x$ due to the optimization of $T$.
+According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or end after the longest project end.
+Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time
+\begin{equation}
+\label{eq:start time constraint}
+\forall x\in Z:s_x\in\left[0,D-d_x\right).
+\end{equation}
 
 \subsection{The goal of the model}
 \label{sec:goal}
 
 The goal of the model is to
 \begin{enumerate}
-\item Choose proper projects to make the plan have the maximum $T$,
-\item Decide the minimum funds to be raised to satisfy step 1 and the constraint (Equation \ref{eq:constraint}),
-\item Decide the start time for each chosen project in step 1 to minimize the variance of yearly costs of the plan.
+\item Decide proper $Z$ to make the plan have the maximum $T$,
+\item Decide the minimum $F$ to satisfy step 1 under the constraint Equation \ref{eq:constraint},
+\item Decide the $s_x$ for each chosen project in step 1 to minimize $\var_n^DC_n$ under the constraint Equation \ref{eq:start time constraint}.
 \end{enumerate}
 
-% TODO: assigned to Ulysses
+In this way, the derived plan can meet the requirements described in Section \ref{sec:restatement}.
+
+To reach the goal, we need to develop some approaches based on the model,
+which are described in Section \ref{sec:approach}.
 
 \section{The approach}
+\label{sec:approach}
+
 \subsection{Minimize the funds when the time efficiency maximum}
 
 % TODO: assigned to Orash
@@ -581,11 +613,74 @@ The cons are
 \section{The memo}
 \label{sec:memo}
 
-Memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo memo.
+\begin{table}
+\centering
+\caption{Schedule of executing the projects}
+\label{tab:schedule}
+\begin{tabular}{c||c|c|c|c|c}
+Year & $0$ & $1$ & $2$ & $3$ & $4$\\
+\hline
+& & & \multicolumn{3}{c}{1-Flowering Plants-502}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-436}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-536}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-183}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-480}\\
+& & \multicolumn{4}{c}{1-Flowering Plants-135}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-481}\\
+& \multicolumn{5}{c}{1-Flowering Plants-176}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-475}\\
+& \multicolumn{5}{c}{1-Flowering Plants-546}\\
+& \multicolumn{5}{c}{1-Flowering Plants-558}\\
+& \multicolumn{5}{c}{1-Flowering Plants-553}\\
+& \multicolumn{5}{c}{1-Flowering Plants-442}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-537}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-548}\\
+& \multicolumn{5}{c}{1-Flowering Plants-426}\\
+& \multicolumn{5}{c}{1-Flowering Plants-452}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-455}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-133}\\
+& \multicolumn{5}{c}{1-Flowering Plants-168}\\
+& \multicolumn{5}{c}{1-Flowering Plants-476}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-137}\\
+& \multicolumn{5}{c}{1-Flowering Plants-485}\\
+& \multicolumn{5}{c}{1-Flowering Plants-528}\\
+& \multicolumn{5}{c}{1-Flowering Plants-520}\\
+& \multicolumn{5}{c}{1-Flowering Plants-514}\\
+& \multicolumn{5}{c}{1-Flowering Plants-517}\\
+& & & \multicolumn{3}{c}{1-Flowering Plants-529}\\
+& \multicolumn{5}{c}{1-Flowering Plants-557}\\
+& \multicolumn{5}{c}{1-Flowering Plants-179}\\
+& \multicolumn{5}{c}{1-Flowering Plants-530}\\
+& \multicolumn{5}{c}{1-Flowering Plants-440}\\
+& \multicolumn{5}{c}{1-Flowering Plants-513}\\
+& \multicolumn{5}{c}{1-Flowering Plants-524}\\
+& \multicolumn{5}{c}{1-Flowering Plants-508}\\
+& \multicolumn{5}{c}{1-Lichens-567}\\
+\hline
+Yearly cost & a & b & c & d & e
+\end{tabular}
+\end{table}
 
-% TODO: assigned to Orash
+\newpage
 
 \section{Appendices}
+
+\subsection{The program used to decide $Z$}
+\label{appendix:prog min T}
+
+\inputminted{ruby}{../knappack.rb}
+
+The \mintinline{text}{plant.rb} file defines the data structure of a plant and imports the constant \mintinline{ruby}{TPD}.
+
+\subsection{The program used to decide start time}
+
+\inputminted{ruby}{../min_variance.rb}
+
+\subsection{The program used to plot the graph of max $T$ related to $F$}
+
+\inputminted{python}{../plot.py}
+
+The program reads the result of the program in Appendix \ref{appendix:prog min T}.
 
 \newpage
 

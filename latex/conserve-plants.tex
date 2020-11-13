@@ -67,7 +67,7 @@ Summary Sheet
 \section{Introduction}
 \label{sec:intro}
 
-The decrease in biodiversity due to the extinction of endangered plants and animals is a serious problem.
+It is a global issue that the decrease in biodiversity due to the extinction of endangered plants is a serious problem for the balance of the eco
 To avoid this, people need to spend money on protecting the plants and animals.
 
 However, in some places like Florida, greatly needing biodiversity conservation,
@@ -82,7 +82,6 @@ To make it clear what is going to be done, the problem is restated mathematicall
 The model and the method to derive the results are to be explained in Section \ref{sec:model}.
 
 We will write a non-technical memo in Section \ref{sec:memo} to give our proposal according to our model.
-
 % TODO: assigned to Orash
 
 \section{Restatement of the problem}
@@ -161,24 +160,35 @@ $a_x$ & $\mathbb N$ & year & When project $x$ starts\\
 \end{table}
 
 \section{General assumptions}
-
+\label{sec:Generalassumption}
 \begin{assumption}
 \label{as:funds at one time}
-The funds are provided off at one time.
+The funds $F$ are provided off at one time.
 \end{assumption}
-
+We don't consider the situation that different funds are raised in different years, which can help us have constraints seperately on different years.
+It also constrainted that funds cannot overdraft from other years. 
 \begin{assumption}
 	Conservation cannot be paused.
 \end{assumption}
+Therefore, we regard the effective benefit in conservation as a whole.
+
 \begin{assumption}
 	Different conservations can be done simultaneously and do not affect each other.
 \end{assumption}
+In the process of planning, even if some projects fail, it will not affect the subsequent plan.
+Based on the independence of projects, both their effective benefits and costs can be added directly, rather than coupled together in some nonlinear way.
+It won't change the cost of the rest of the project due to my execution on any project.
+\begin{comment}
 \begin{assumption}
 	Extra funds' last year can be saved for this year.
+	
 \end{assumption}
+\end{comment}
+
 \begin{assumption}
 	The conservation plan should not change when it is ongoing.	
 \end{assumption}
+
 \begin{assumption}
 \label{as:time efficiency over balancing}
 The maximization of time efficiency is prior to the balancing of funds spent over time.

@@ -590,7 +590,18 @@ which are described in Section \ref{sec:approach}.
 
 \section{The approach}
 \label{sec:approach}
-
+\subsection{Find the maximum effective benefit that can be loaded into the package with given funds}
+Define the function v = FN (m, POS), input: M current maximum bearing weight, POS specifies the position from which se to calculate.
+The algorithm of recursive function is as follows:
+1. Judge whether the weight of the object at POS exceeds M
+2. If it is more than, give up the item in the position, and the function returns FN (m, POS + 1). If it is the last one, it will return 0 directly
+3. If not, continue with the following process
+4. If put in, get a value
+v1=w[pos]+fn(M-w[pos],pos+1)
+If you don't put it in, you get a value
+v2=fn(M,pos+1)
+If V1 > = V2, execute put: Mark OK [POS] as 1, and the function returns v1
+If V1 < V2, the function returns v2
 \subsection{Minimize the funds when the time efficiency maximum}
 
 % TODO: assigned to Orash

@@ -165,8 +165,8 @@ $a_x$ & $\mathbb N$ & year & When project $x$ starts\\
 \label{as:funds at one time}
 The funds $F$ are provided off at one time.
 \end{assumption}
-We don't consider the situation that different funds are raised in different years, which can help us have constraints seperately on different years.
-It also constrainted that funds cannot overdraft from other years. 
+We cannot consider the situation that different funds are raised in different years, which can help us have constraints seperately on different years.
+It is also constrainted that funds cannot overdraft from other years. 
 \begin{assumption}
 	Conservation cannot be paused.
 \end{assumption}
@@ -577,7 +577,7 @@ C\le F.
 
 There are also constraints resulting from the restrictions for $a_x$ due to the optimization of $T$.
 According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or end after the longest project end.
-Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time
+Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time.
 \begin{equation}
 \label{eq:start time constraint}
 \forall x\in Z:a_x\in\left[0,D-d_x\right).
@@ -601,20 +601,44 @@ which are described in Section \ref{sec:approach}.
 \section{The approach}
 \label{sec:approach}
 \subsection{Find the maximum effective benefit that can be loaded into the package with given funds}
-Define the function v = FN (m, POS), input: M current maximum bearing weight, POS specifies the position from which se to calculate.
-The algorithm of recursive function is as follows:
-1. Judge whether the weight of the object at POS exceeds M
-2. If it is more than, give up the item in the position, and the function returns FN (m, POS + 1). If it is the last one, it will return 0 directly
-3. If not, continue with the following process
-4. If put in, get a value
-v1=w[pos]+fn(M-w[pos],pos+1)
-If you don't put it in, you get a value
-v2=fn(M,pos+1)
-If V1 > = V2, execute put: Mark OK [POS] as 1, and the function returns v1
-If V1 < V2, the function returns v2
-\subsection{Minimize the funds when the time efficiency maximum}
+We turn the question into a question with $n$ items and $a$ backpack with capacity $F$.
+The cost of item $x$ is $C[x]$ and the value is $\beta[i]$. 
+Find out which items are loaded into the backpack to maximize the total value.
+We used the recursive algorithm. Here is our procedure
 
-% TODO: assigned to Orash
+
+Firstly, Convert the data in TPD into an array.
+
+Secondly, calculate the value of each item under unit weight $K[x]$ = $\frac{\beta[x]}{C[x]}$, and sort them from large to small according to their value. 
+If the they are same, sort them according to their weight.
+
+Thirdly, we set a sequence $ok[x]$ to store whether the corresponding items are loaded or not, 1 means yes, 0 means no.(the initial values are all 0).
+
+Define the function $v = fn(F, POS)$, input: $F$, that is, the current maximum weight that can be carried, and $POS$ refers to the number of positions in the array to calculate.\\
+The algorithm of recursive function is shown as follows:\\
+1. Judge whether the weight of the object at $POS$ is bigger than in $F$.\\
+2. If True, give up the item in the position, and the function returns $fn(F, POS + 1)$. If it is the last one, return 0 directly.\\
+3. If Fulse, continue with the following process.\\
+4. If put in,\\
+$v_1=C[pos]+fn(F-C[pos],pos+1)$\\
+If you don't put it in,\\
+$v_2=fn(F,pos+1)$\\
+If $v_1 > = v_2$, execute put: Mark $ok[POS]$ as 1, and the function returns $v_1$\\
+If $v_1 < v_2$, the function returns $v_2$.\\
+
+\subsection{Minimize the variance}
+
+\subsection{The maximum time efficiency of the program with a given funds}
+On the basis of the first program, remove the knapsack candidates from the project with the largest time, run again and repeat.
+Then we can find the plan with the maximum value of the $\frac{\beta_x}{t}$
+\subsection{Minimize the funds when the time efficiency maximum}
+On the basis of the Chinese version, the funds are reduced to when the $min\beta_x$ can no longer be included in the plan.
+\subsection{Statement}
+\subsubsection{Why not use the classical DP method to solve the knapsack problem?}
+Hence, we figured out that we can use the recursive and the Cache to have a smaller time complexity.
+\subsubsection{Why do we need to round up money?}
+The data in the database is float numbers, which cannot be the key of the array so that we cannot use the normal knapsack algorithm(dp) to calculate the best knapsack.
+Hence, the knapsack problem with a float size cannot be solved. 
 
 \section{Pros and cons}
 Our model have some pros and cons in solving the problem described in \ref{sec:intro}.

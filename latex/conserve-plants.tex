@@ -10,7 +10,7 @@
 \usepackage{footnote}
 \usepackage{tablefootnote}
 \usepackage{makecell}
-\usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage[a4paper, total={5.6in, 8.8in}]{geometry}
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{array}
@@ -18,6 +18,8 @@
 \usepackage{unicode-math}
 \usepackage{minted}
 \usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \setmathfont{XITS Math}
 
@@ -116,7 +118,7 @@ Note that in this article, all numberings
 start with $0$ instead of $1$ to meet the convention in computer science.
 
 The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
-Similar notation is used for other operators like $\prod$, $\var$, and so on.
+Similar notation is used for other operators like $\prod$, $\var$ (variance), and so on.
 
 If $X$ is a variable related to the plan, $X^*$ denotes the actual value of the variable in the final optimal plan.
 
@@ -160,24 +162,46 @@ $a_x$ & $\mathbb N$ & year & When project $x$ starts\\
 \end{table}
 
 \section{General assumptions}
-\label{sec:Generalassumption}
+\label{sec:assumptions}
+
 \begin{assumption}
 \label{as:funds at one time}
 The funds $F$ are provided off at one time.
 \end{assumption}
-We cannot consider the situation that different funds are raised in different years, which can help us have constraints seperately on different years.
-It is also constrainted that funds cannot overdraft from other years. 
-\begin{assumption}
-	Conservation cannot be paused.
-\end{assumption}
-Therefore, we regard the effective benefit in conservation as a whole.
+
+We do consider the situation that different funds are raised in different years,
+but when adjusting $a_x$ in the plan, not when deciding $Z$.
+This can simplify the constraint given by the limitation of funds.
+
+If we consider that the funds may be given differently in different years at the first place as a constraint for our plan,
+Equation \ref{eq:constraint} will be written in a far more complicated way, which invalidates all the algorithms and theorems stated in Section \ref{sec:approach}.
+In fact, without this assumption, the problem becomes NP-hard because it can be reduced to a multi-dimensional knapsack problem \cite{2dknapsacknp}.
+
+This assumption together with Assumption \ref{as:time efficiency over balancing} gives the priority of optimization.
 
 \begin{assumption}
-	Different conservations can be done simultaneously and do not affect each other.
+\label{as:no pause}
+A project cannot be paused.
 \end{assumption}
-In the process of planning, even if some projects fail, it will not affect the subsequent plan.
-Based on the independence of projects, both their effective benefits and costs can be added directly, rather than coupled together in some nonlinear way.
-It won't change the cost of the rest of the project due to my execution on any project.
+
+In this way, the funds spent each year can only be adjusted by adjusting the start time for each project,
+but cannot be adjusted by pausing some certain projects.
+In other words, it is impossible that the plan requires to pause a project because funds are used up.
+This makes it possible that the funds spent by a project during a plan can be described according to only a single number $a_x$.
+
+This assumption also avoids the possibility that a project fails midway when executed, creating better choices for the rest of the plan for remediation.
+
+\begin{assumption}
+\label{as:no interrelationship}
+Different projects can be executed simultaneously and do not affect each other.
+\end{assumption}
+
+We do not consider that different projects may have some actions in common and share their cost, or one project benefit another project and make more total benefit.
+Such situations can make the problem extremely hard because the benefits and costs of the projects are coupled in a nonlinear way instead of simplify summed up.
+
+This assumption is used when defining $B$ in Section \ref{sec:effective benefit} because it can only be defined as Equation \ref{eq:total effective benefit} when there are no interrelationships between projects.
+It is also used when defining $C_n$ in Section \ref{sec:variance of yearly costs} because it can only be defined as Equation \ref{eq:yearly cost} if there are no interrelationships between projects.
+
 \begin{comment}
 \begin{assumption}
 	Extra funds' last year can be saved for this year.
@@ -186,15 +210,17 @@ It won't change the cost of the rest of the project due to my execution on any p
 \end{comment}
 
 \begin{assumption}
-	The conservation plan should not change when it is ongoing.	
+The plan should not change when it is ongoing.
 \end{assumption}
+
+This assumption is necessary to make our result a simple schedule instead of a complicated flow chart.
 
 \begin{assumption}
 \label{as:time efficiency over balancing}
-The maximization of time efficiency is prior to the balancing of funds spent over time.
+The maximization of $T$ is prior to the balancing of funds spent over time (minimizing $\var_n^DC_n$).
 \end{assumption}
 
-% TODO: assigned to Orash
+This assumption together with Assumption \ref{as:funds at one time} plays an important row when describing our final goal of the model in Section \ref{sec:goal}.
 
 \section{The model}
 \label{sec:model}
@@ -410,6 +436,7 @@ By summing up the effective benefit for all projects of the plan, the total effe
 \begin{definition}[total effective benefit]
 The \textbf{total effective benefit} of the project is a real number $B\in\left[0,+\infty\right)$ defined as
 \begin{equation}
+\label{eq:total effective benefit}
 B:=\sum_{x\in Z}b_x.
 \end{equation}
 \end{definition}
@@ -522,6 +549,7 @@ The \textbf{start time} of project $x$ is a real number $a_x\in\mathbb N$.
 \begin{definition}[yearly costs]
 The \textbf{yearly cost} of the plan in the $n$th year is a real number $C_n\in\left[0,+\infty\right)$ defined as
 \begin{equation}
+\label{eq:yearly cost}
 C_n:=\sum_{x\in Z}c_{x,n-a_x}.
 \end{equation}
 \end{definition}
@@ -600,7 +628,85 @@ which are described in Section \ref{sec:approach}.
 
 \section{The approach}
 \label{sec:approach}
-\subsection{Find the maximum effective benefit that can be loaded into the package with given funds}
+
+In Section \ref{sec:goal}, it is stated that the first step is to maximize $T$ regardless of constraint Equation \ref{eq:constraint}.
+However, because it is actually not known whether max $T$ can increase constantly as long as allowable $C$ increase until all projects available is chosen in $Z$.
+To study the trend of how max $T$ under constraint Equation \ref{eq:constraint} changes when $F$ increases, the actual step of our approach is to
+\begin{enumerate}
+\item Develop a program to maximize $B$ given $F$,
+\item Develop a program based on the last program to maximize $T$ given $F$,
+\item Ensure that $T$ has a maximum value $T^*$ whenever $F\ge F^*$, where $F^*$ is to be determined,
+\item Develop a program to minimize $\var_n^DC_n$.
+\end{enumerate}
+
+\subsection{Maximize $B$ given $F$ under constraint Equation \ref{eq:constraint}}
+
+This subproblem is a 0-1 knapsack problem, regarding
+\begin{itemize}
+\item $F$ as the capacity of the knapsack,
+\item $c_x$ as the weight of the $x$th item,
+\item $\beta_x$ as the value of the $x$th item.
+\end{itemize}
+
+There is a classic dynamic programming (DP) algorithm to solve knapsack problems \cite{dpknapsack},
+shown in Algorithm \ref{alg:dp}.
+
+\begin{algorithm}[h!]
+\caption{Classic DP algorithm for 0-1 knapsack problem}
+\label{alg:dp}
+\begin{algorithmic}
+\Function{dp}{$F$}
+\State Initialize $m$ as an array whose elements are all $0$
+\State Initialize $p$ as an array whose elements are all $\emptyset$
+\For{each project $x$}
+	\For{$w$ from $F$ down to $c_x$}
+		\If{$m\left[w\right]<m\left[w-c_x\right]+\beta_x$}
+			\State$m\left[w\right]\leftarrow m\left[w-c_x\right]+\beta_x$
+			\State$p\left[w\right]\leftarrow p\left[w-c_x\right]\cup x$
+		\EndIf
+	\EndFor
+\EndFor
+\State\Return$m\left[F\right],p\left[F\right]$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+However, this algorithm does not fit with our problem here
+because $F$ and $c_x$ should be natural numbers to appear as index of elements in arrays like $m$ and $p$.
+The conflict can be resolved by rounding the values into integers,
+but due to the large capacity of the knapsack and the large weight of the items,
+the algorithm cannot give a result in acceptable time until the rounding makes the inaccuracy so significant that the result is not convincing at all.
+
+Thus, a new algorithm should be developed.
+The main reason for Algorithm \ref{alg:dp} to be slow is that it traverse through a whole continuous part of array $m$ whenever it traverse a project $x$,
+while most of the elements in $m$ are useless and are unnecessary to be updated.
+However, whether an element in $m$ is useful cannot be determined using the DP algorithm.
+Inspired by this thought, the recursive algorithm can be adopted because it can make the program consider small $w$ values first and determine which $w$ values later on are useful.
+The new algorithm is shown in Algorithm \ref{alg:recursive}.
+
+\begin{algorithm}[h!]
+\caption{Recursive algorithm for 0-1 knapsack problem}
+\label{alg:recursive}
+\begin{algorithmic}
+\Function{recursive}{$F$,$x$}
+\If{$x$ exceeds the limit of projects}
+	\State\Return$0,\emptyset$
+\ElsIf{$c_x>F$}
+	\State\Return$\Call{recursive}{F,x+1}$
+\Else
+	\State$m_1,p_1\leftarrow\Call{recursive}{F,x+1}$
+	\State$m_2,p_2\leftarrow\Call{recursive}{F-c_x,x+1}$
+	\If{$m_1<m_2+\beta_x$}
+		\State\Return$m_2+\beta_x,p_2\cup x$
+	\Else
+		\State\Return$m_1,p_1$
+	\EndIf
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{comment}
 We turn the question into a question with $n$ items and $a$ backpack with capacity $F$.
 The cost of item $x$ is $C[x]$ and the value is $\beta[i]$. 
 Find out which items are loaded into the backpack to maximize the total value.
@@ -625,6 +731,7 @@ If you don't put it in,\\
 $v_2=fn(F,pos+1)$\\
 If $v_1 > = v_2$, execute put: Mark $ok[POS]$ as 1, and the function returns $v_1$\\
 If $v_1 < v_2$, the function returns $v_2$.\\
+\end{comment}
 
 \subsection{Minimize the variance}
 
@@ -644,19 +751,29 @@ Hence, the knapsack problem with a float size cannot be solved.
 Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
 The pros are
 \begin{enumerate}
-\item Pro 1.
-\item Pro 2.
-\item Pro 3.
+\item The model takes into account multiple factors.
+It considers the maximization of sum of effective benefit
+(taking into account the benefit, the taxonomic uniqueness, and the feasibility of success)
+of the projects in the plan,
+the minimization of the duration of executing the plan,
+and the balance of funds spent over time.
+\item The mechanism and theories about the model are simple and easy to understand.
+Although the algorithm may be difficult to be come up with,
+its mechanism and program is simple, and its result can be reproduced easily.
+\item The model provides a method to output the actually chosen items in the recursive solution of a knapsack problem.
+It combines the advantages of the dynamic programming solution and the recursive solution: be fast regarding large knapsack problems and be able to output the contents of the optimal plan.
 \end{enumerate}
 
 The cons are
 \begin{enumerate}
-\item Con 1.
-\item Con 2.
-\item Con 3.
+\item The model does not consider the funding schedule at first place.
+The funding schedule does not appear as a constraint as stated by Assumption \ref{as:funds at one time}.
+\item The model does not consider probable accidents during the plan.
+The plan cannot change midway even some projects stopped accidentally (which is not considered due to Assumption \ref{as:no pause}), creating better choices for the rest of the plan as remediation.
+\item The model does not consider the interrelationship between projects.
+It is normal that different projects include common actions which interrelates with each other, changing the cost.
+It is not considered as stated by Assumption \ref{as:no interrelationship}.
 \end{enumerate}
-
-% TODO: assigned to Orash
 
 \newpage
 
@@ -747,11 +864,9 @@ The max $T$ related to $F$ for $F<F^*$ is given in Table \ref{tab:max T funds}.
 For $F\ge F^*$, max $T$ is the same as $T^*$.
 Data in Table \ref{tab:max T funds} are calculated by the program in Appendix \ref{appendix:prog min T}.
 
-\begin{table}[h!]
-\centering
+\begin{longtable}{cc}
 \caption{Table of max $T$ related to $F$ before $T$ is maximized}
-\label{tab:max T funds}
-\begin{tabular}{cc}
+\label{tab:max T funds}\\
 \toprule
 $F$ & max $T$\\
 \midrule
@@ -794,13 +909,11 @@ $F$ & max $T$\\
 \$10800000.00 & 1631451.60\\
 \$11100000.00 & 1638017.60\\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{longtable}
 
 \newpage
 
-\begin{thebibliography}{9}
-\item Ref 1.
-\end{thebibliography}
+\bibliographystyle{unsrt}
+\bibliography{conserve-plants}
 
 \end{document}

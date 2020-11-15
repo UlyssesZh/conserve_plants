@@ -20,6 +20,8 @@
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{graphicx}
 
 \setmathfont{XITS Math}
 
@@ -655,7 +657,11 @@ shown in Algorithm \ref{alg:dp}.
 \caption{Classic DP algorithm for 0-1 knapsack problem}
 \label{alg:dp}
 \begin{algorithmic}
-\Function{dp}{$F$}
+\State Integerize $F$
+\For{each project $x$}
+	\State Integerize $c_x$
+\EndFor
+\Function{knapsack}{$F$}
 \State Initialize $m$ as an array whose elements are all $0$
 \State Initialize $p$ as an array whose elements are all $\emptyset$
 \For{each project $x$}
@@ -688,7 +694,7 @@ The new algorithm is shown in Algorithm \ref{alg:recursive}.
 \caption{Recursive algorithm for 0-1 knapsack problem}
 \label{alg:recursive}
 \begin{algorithmic}
-\Function{recursive}{$F$,$x$}
+\Function{recursive}{$F,x$}
 \If{$x$ exceeds the limit of projects}
 	\State\Return$0,\emptyset$
 \ElsIf{$c_x>F$}
@@ -703,10 +709,124 @@ The new algorithm is shown in Algorithm \ref{alg:recursive}.
 	\EndIf
 \EndIf
 \EndFunction
+\Function{knapsack}{$F$}
+\State\Return$\Call{recursive}{F,0}$
+\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
+However, when there are many projects, the recursive algorithm even takes more time than the DP algorithm
+because there some $\left(F,x\right)$ being calculated multiple times.
+Since this recursive function is a pure function, a cache can be used to store previously calculated result.
+Nonetheless, since $F$ and $c_x$ are floating numbers, the probability of cache hit is low.
+To increase the probability of cache hit, the numbers should be rounded.
+In our case, they are rounded to $\SI{100}{dollars}$.
+
+There can also be some other optimizations.
+The projects can be sorted according to their costs, so that the condition branch $c_x>F$ can be designed to be a short-circuit evaluation,
+immediately returning $0,\emptyset$ because the rest projects are even more expensive.
+
+The optimized version is shown in Algorithm \ref{alg:optimized recursive}.
+
+\begin{algorithm}[h!]
+\caption{Recursive algorithm for 0-1 knapsack problem, optimized with cache and short-circuit evaluation}
+\label{alg:optimized recursive}
+\begin{algorithmic}
+\State Integerize $F$
+\For{each project $x$}
+	\State Integerize $c_x$
+\EndFor
+\State Sort the projects w.r.t. $c_x$
+\Function{recursive}{$F,x$}
+\If{$k\left[F,x\right]$ exists}
+	\State\Return$k\left[F,x\right]$
+\ElsIf{$x$ exceeds the limit of projects \textbf{or} $c_x>F$}
+	\State\Return$k\left[F,x\right]\leftarrow0,\emptyset$
+\Else
+	\State$m_1,p_1\leftarrow\Call{recursive}{F,x+1}$
+	\State$m_2,p_2\leftarrow\Call{recursive}{F-c_x,x+1}$
+	\If{$m_1<m_2+\beta_x$}
+		\State\Return$k\left[F,x\right]\leftarrow m_2+\beta_x,p_2\cup x$
+	\Else
+		\State\Return$k\left[F,x\right]\leftarrow m_1,p_1$
+	\EndIf
+\EndIf
+\EndFunction
+\Function{knapsack}{$F$}
+\State Initialize $k$ as a key-value mapping
+\State\Return$\Call{recursive}{F,0}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm \ref{alg:optimized recursive} is implemented in Ruby as part of Appendix \ref{appendix:prog min T}.
+
+\subsection{Maximize $T$ given $F$ under constraint Equation \ref{eq:constraint}}
+
+The plan given by maximizing $B$ may not have maximum $T$.
+The only thing that can be ensured is that $T$ cannot increase without reducing $D$.
+According to Equation \ref{eq:duration of the plan}, $D$ is determined by the longest project.
+Thus, if we want to increase $T$, we need to remove the longest project in the selected plan,
+and find another plan that maximizes $B$ without using the project that we have just removed.
+The process is cycled until no projects are chosen.
+
+From this insight, the pseudocodes shown in Algorithm \ref{alg:max T funds}.
+The algorithm is implemented in Ruby in Appendix \ref{appendix:prog min T}.
+
+\begin{algorithm}[h!]
+\caption{Algorithm for maximizing $T$ given $F$}
+\label{alg:max T funds}
+\begin{algorithmic}
+\State$m,p\leftarrow0,\emptyset$
+\Loop
+	\State$B,Z\leftarrow\Call{knapsack}{F}$
+	\If{$Z=\emptyset$}
+		\State\Return$m,p$
+	\EndIf
+	\If{$m<T$}
+		\State$m,p\leftarrow T,Z$
+	\EndIf
+	\State Remove project $\xi$ from the set of all projects
+\EndLoop
+\end{algorithmic}
+\end{algorithm}
+
+After running the program, the curve of max $T$ related to $F$ can be drawn,
+as shown in Figure \ref{fig:max T funds}.
+As can be seen, although $F$ increases until there are enough funds to execute all the projects simultaneously,
+max $T$ does not increase constantly but reaches its maximum when $F\ge F^*$.
+It can be derived that $F^*=\SI{11010118.27}{dollars}$ and $T^*=\SI{1638017.60}{osu/year}$.
+The chosen plants are shown in Table \ref{tab:schedule} in Section \ref{sec:memo}.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\includegraphics[width=\linewidth]{max_time_efficiency_with_funds.png}
+\caption{Overview of the whole graph, where the orange point is $\left(F^*,T^*\right)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\linewidth}
+\includegraphics[width=\linewidth]{max_time_efficiency_with_funds_detail.png}
+\caption{Details of the graph near $\left(F^*,T^*\right)$}
+\end{subfigure}
+\caption{The graph of max $T$ related to $F$}
+\label{fig:max T funds}
+\end{figure}
+
+\subsection{Minimizing \texorpdfstring{$\var_n^DC_n$}{varnDCn} under constraint Equation \ref{eq:start time constraint}}
+
+In Section \ref{sec:variance of yearly costs}, it has been proved that minimizing $\var_n^DC_n$ is the same as minimizing $\sum_n^DC_n^2$,
+which can reduce some calculations in calculating the variance (while does not help come up with a smart algorithm because still, the problem is NP-hard).
+
+Here, a brute force algorithm is adopted.
+It traverses through all possible start times (as many as $\prod_{x\in Z}\left(D-d_x\right)$ cases).
+The algorithm is implemented in Ruby in Appendix \ref{appendix:decide start time}.
+
+After running the program, the optimal $\left\{a_x\right\}$ can be derived.
+The optimal $\left\{a_x\right\}$ are shown in Table \ref{tab:schedule} in Section \ref{sec:memo} in form of a schedule.
+The minimum value of $\sum_n^DC_n^2$ is $\SI{26457147921183.15}{dollars^2}$.
+
 \begin{comment}
+\subsection{Find the maximum effective benefit that can be loaded into the package with given funds}
 We turn the question into a question with $n$ items and $a$ backpack with capacity $F$.
 The cost of item $x$ is $C[x]$ and the value is $\beta[i]$. 
 Find out which items are loaded into the backpack to maximize the total value.
@@ -731,7 +851,6 @@ If you don't put it in,\\
 $v_2=fn(F,pos+1)$\\
 If $v_1 > = v_2$, execute put: Mark $ok[POS]$ as 1, and the function returns $v_1$\\
 If $v_1 < v_2$, the function returns $v_2$.\\
-\end{comment}
 
 \subsection{Minimize the variance}
 
@@ -746,6 +865,7 @@ Hence, we figured out that we can use the recursive and the Cache to have a smal
 \subsubsection{Why do we need to round up money?}
 The data in the database is float numbers, which cannot be the key of the array so that we cannot use the normal knapsack algorithm(dp) to calculate the best knapsack.
 Hence, the knapsack problem with a float size cannot be solved. 
+\end{comment}
 
 \section{Pros and cons}
 Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
@@ -784,7 +904,7 @@ Table \ref{tab:schedule} shows the schedule of the optimal plan.
 The $n$th column denotes the $n$th year.
 The last row sums the costs of the projects, representing the fundraising schedule.
 
-The total cost of the plan is \$11010118.27.
+The total cost of the plan is $\$11010118.27$.
 
 \begin{table}[h!]
 \centering
@@ -831,7 +951,7 @@ $0$ & $1$ & $2$ & $3$ & $4$\\
 \multicolumn{5}{|c|}{1-Flowering Plants-508}\\\hline
 \multicolumn{5}{|c|}{1-Lichens-567}\\\hline
 \hline
-\$2600492.21 & \$2555863.21 & \$3024886.35 & \$1488407.44 & \$1340469.06\\
+$\$2600492.21$ & $\$2555863.21$ & $\$3024886.35$ & $\$1488407.44$ & $\$1340469.06$\\
 \hline
 \end{tabular}
 \end{table}
@@ -848,6 +968,7 @@ $0$ & $1$ & $2$ & $3$ & $4$\\
 The \mintinline{text}{plant.rb} file defines the data structure of a plant and imports the constant \mintinline{ruby}{TPD}.
 
 \section{The program used to decide $\left\{a_x\right\}$}
+\label{appendix:decide start time}
 
 \inputminted{ruby}{../min_variance.rb}
 
@@ -868,46 +989,46 @@ Data in Table \ref{tab:max T funds} are calculated by the program in Appendix \r
 \caption{Table of max $T$ related to $F$ before $T$ is maximized}
 \label{tab:max T funds}\\
 \toprule
-$F$ & max $T$\\
+$F$ (dollars) & max $T$ (osu/year)\\
 \midrule
-\$0.00 & 0.00\\
-\$300000.00 & 435567.00\\
-\$600000.00 & 622541.67\\
-\$900000.00 & 727932.67\\
-\$1200000.00 & 810146.67\\
-\$1500000.00 & 878511.67\\
-\$1800000.00 & 909344.67\\
-\$2100000.00 & 937911.67\\
-\$2400000.00 & 937911.67\\
-\$2700000.00 & 937911.67\\
-\$3000000.00 & 957915.40\\
-\$3300000.00 & 1010095.00\\
-\$3600000.00 & 1058935.00\\
-\$3900000.00 & 1111114.60\\
-\$4200000.00 & 1160443.00\\
-\$4500000.00 & 1203976.60\\
-\$4800000.00 & 1253305.00\\
-\$5100000.00 & 1291070.20\\
-\$5400000.00 & 1328921.20\\
-\$5700000.00 & 1373425.00\\
-\$6000000.00 & 1403508.00\\
-\$6300000.00 & 1430026.80\\
-\$6600000.00 & 1456288.20\\
-\$6900000.00 & 1473947.80\\
-\$7200000.00 & 1497505.20\\
-\$7500000.00 & 1522926.40\\
-\$7800000.00 & 1533631.60\\
-\$8100000.00 & 1556091.40\\
-\$8400000.00 & 1571313.80\\
-\$8700000.00 & 1590420.80\\
-\$9000000.00 & 1603152.20\\
-\$9300000.00 & 1622259.20\\
-\$9600000.00 & 1622259.20\\
-\$9900000.00 & 1622259.20\\
-\$10200000.00 & 1628825.20\\
-\$10500000.00 & 1631451.60\\
-\$10800000.00 & 1631451.60\\
-\$11100000.00 & 1638017.60\\
+$0.00$ & $0.00$\\
+$300000.00$ & $435567.00$\\
+$600000.00$ & $622541.67$\\
+$900000.00$ & $727932.67$\\
+$1200000.00$ & $810146.67$\\
+$1500000.00$ & $878511.67$\\
+$1800000.00$ & $909344.67$\\
+$2100000.00$ & $937911.67$\\
+$2400000.00$ & $937911.67$\\
+$2700000.00$ & $937911.67$\\
+$3000000.00$ & $957915.40$\\
+$3300000.00$ & $1010095.00$\\
+$3600000.00$ & $1058935.00$\\
+$3900000.00$ & $1111114.60$\\
+$4200000.00$ & $1160443.00$\\
+$4500000.00$ & $1203976.60$\\
+$4800000.00$ & $1253305.00$\\
+$5100000.00$ & $1291070.20$\\
+$5400000.00$ & $1328921.20$\\
+$5700000.00$ & $1373425.00$\\
+$6000000.00$ & $1403508.00$\\
+$6300000.00$ & $1430026.80$\\
+$6600000.00$ & $1456288.20$\\
+$6900000.00$ & $1473947.80$\\
+$7200000.00$ & $1497505.20$\\
+$7500000.00$ & $1522926.40$\\
+$7800000.00$ & $1533631.60$\\
+$8100000.00$ & $1556091.40$\\
+$8400000.00$ & $1571313.80$\\
+$8700000.00$ & $1590420.80$\\
+$9000000.00$ & $1603152.20$\\
+$9300000.00$ & $1622259.20$\\
+$9600000.00$ & $1622259.20$\\
+$9900000.00$ & $1622259.20$\\
+$10200000.00$ & $1628825.20$\\
+$10500000.00$ & $1631451.60$\\
+$10800000.00$ & $1631451.60$\\
+$11100000.00$ & $1638017.60$\\
 \bottomrule
 \end{longtable}
 

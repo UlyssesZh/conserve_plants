@@ -24,7 +24,7 @@ end
 
 def max_time_efficiency_under funds
 	@plants = SORTED_TPD.clone
-	max_time_efficiency, max_time_efficiency_taken = 0r, []
+	max_time_efficiency, max_time_efficiency_taken = 0r, 0
 	loop do
 		@cache = {}
 		max_effective_benefit, taken = max_effective_benefit_under funds

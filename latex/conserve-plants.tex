@@ -22,6 +22,8 @@
 \usepackage{algpseudocode}
 \usepackage{subcaption}
 \usepackage{graphicx}
+\usepackage{tocbibind}
+\usepackage[toc,page]{appendix}
 
 \setmathfont{XITS Math}
 
@@ -61,7 +63,26 @@ Summary Sheet
 
 \normalsize
 
- Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary.
+Helping Florida to use the funds in an effective and balanced way is a problem related to the optimization with multiple constraints.
+To solve the difficult problem, we developed a knapsack model and a scheduling model to analyze the properties of the projects involved in the conservation plan and find out what mathematical process we are going to go through to reach our goal.
+We also modified the algorithm for knapsack problem to solve the model and derive the result: the best schedule of the plan.
+
+We have given formal analysis over all the concepts related to our model,
+including the raw attributes of the projects given in the attachments of the problem
+and the derived attributes of the plan and projects calculated from the raw attributes.
+After analyzing the factors we need to consider for the problem, we find that the problem can be reduced into two smaller problems: a knapsack problem and a scheduling problem.
+
+The knapsack problem is to select proper projects so that the efficiency of the plan is maximized.
+We have used a modified algorithm for knapsack problem to solve the knapsack model.
+After this step, we have derived the best choice of projects.
+
+The scheduling problem is to decide the start time for the projects in the plan so that the funds spent over time is most balanced.
+We have used mathematics to reduce the problem into a minimization of sum of square, and used a rather brute force algorithm to get the result.
+This gives us the final schedule of the conservation plan.
+
+Finally, we reviewed our model and listed its pros and cons.
+Although some of the general assumptions of the model make its application limited,
+the comprehensiveness and effectiveness of our model is significant.
 
 \newpage
 
@@ -71,7 +92,7 @@ Summary Sheet
 \section{Introduction}
 \label{sec:intro}
 
-It is a global issue that the decrease in biodiversity due to the extinction of endangered plants is a serious problem for the balance of the eco
+It is a global issue that the decrease in biodiversity due to the extinction of endangered plants is a serious problem for the balance of the ecosystem.
 To avoid this, people need to spend money on protecting the plants and animals.
 
 However, in some places like Florida, greatly needing biodiversity conservation,
@@ -82,30 +103,48 @@ Different projects of conservation have different cost, benefit, and required ti
 as shown in the table of threatened plants data (abbreviated as TPD in the following parts of the paper).
 It is to be determined which projects are selected in the optimal plan according to these factors.
 After choosing the projects, when to start the projects should also be determined to balance the funds spent over time as possible.
-To make it clear what is going to be done, the problem is restated mathematically in Section \ref{sec:restatement}.
-The model and the method to derive the results are to be explained in Section \ref{sec:model}.
 
-We will write a non-technical memo in Section \ref{sec:memo} to give our proposal according to our model.
-% TODO: assigned to Orash
+To make it clear what is going to be done, the problem is restated in Section \ref{sec:restatement}.
+The model used in our solution to the problem and its explanation are shown in Section \ref{sec:model}.
+The algorithms used to solve the model are introduced and explained in Section \ref{sec:approach}.
+We will also write a non-technical memo in Section \ref{sec:memo} to give our proposal according to the result of our model.
 
-\section{Restatement of the problem}
+\section{Restatement and analysis of the problem}
 \label{sec:restatement}
 
-In Florida, many plant species are facing the challenge of extinction.
-Various plant conservation projects with different budgets and timelines are now being conducted to resolve this problem.
-However, one major issue is that funds mainly from the annual fundraising are not sufficient to support all projects.
+Various plant conservation projects with different budgets and timelines are to be conducted.
+However, one major issue is that funds are not sufficient to support all projects.
 Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their fund.
-What's notable is that the final goal of this plan is not to simply save as many as plant species as possible.
-Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
-The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of another plant dying out shall decrease, finally leading to less benefit.
-Another factor is the funds spent on these projects.
-Obviously, a project with median benefit but high expense doesn't fit.
-The most suitable plan we need to find out should include all variables mentioned and give the best result.
 
-% TODO: assigned to Stephen
+What is notable is that the final goal of this plan is not to simply save as many as plant species as possible.
+Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
+The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of another plant dying out shall increase, finally leading to less benefit.
+Another factor is the funds spent on these projects.
+Obviously, a project with median benefit but high expense does not fit.
+The most suitable plan we need to find out should include all variables mentioned and give the best result.
 
 The mathematical description of the problem is given in Section \ref{sec:model}.
 To be specific, the problem is to reach the goal described in Section \ref{sec:goal}.
+
+The factors that we need to consider are
+\begin{itemize}
+\item The total benefit of the plan should be larger as possible;
+\item The time spent on the plan should be shorter as possible;
+\item Considering the taxonomic uniqueness of protected species, the benefit of a project may not be fully exerted;
+\item Considering the feasibility of success, a project may not be successfully executed;
+\item The funds spent over time should be balanced as possible.
+\end{itemize}
+
+These factors are coupled in different ways and have different priorities.
+Therefore, our work is going to consist of
+\begin{enumerate}
+\item Giving the mathematical definition and explaining the factors above and related concepts,
+\item Analyzing the factors and deriving the way that they are coupled together,
+\item Determining the priorities of the factors and thus determining the goals of our mathematical model,
+\item Developing algorithms to solve the model and thus reaching the determined goals.
+\end{enumerate}
+
+The whole process is mainly shown in Section \ref{sec:model}, explaining the mathematical model, and in Section \ref{sec:approach}, explaining the algorithms.
 
 \section{List of symbols}
 
@@ -120,7 +159,7 @@ Note that in this article, all numberings
 start with $0$ instead of $1$ to meet the convention in computer science.
 
 The symbol $\sum_j^n$ means to sum for $j=0,1,\dots,n-1$.
-Similar notation is used for other operators like $\prod$, $\var$ (variance), and so on.
+Similar notations are used for other operators like $\prod$, $\var$ (variance), and so on.
 
 If $X$ is a variable related to the plan, $X^*$ denotes the actual value of the variable in the final optimal plan.
 
@@ -222,7 +261,7 @@ This assumption is necessary to make our result a simple schedule instead of a c
 The maximization of $T$ is prior to the balancing of funds spent over time (minimizing $\var_n^DC_n$).
 \end{assumption}
 
-This assumption together with Assumption \ref{as:funds at one time} plays an important row when describing our final goal of the model in Section \ref{sec:goal}.
+This assumption together with Assumption \ref{as:funds at one time} plays an important role when describing our final goal of the model in Section \ref{sec:goal}.
 
 \section{The model}
 \label{sec:model}
@@ -628,7 +667,7 @@ In this way, the derived plan can meet the requirements described in Section \re
 To reach the goal, we need to develop some approaches based on the model,
 which are described in Section \ref{sec:approach}.
 
-\section{The approach}
+\section{The algorithms}
 \label{sec:approach}
 
 In Section \ref{sec:goal}, it is stated that the first step is to maximize $T$ regardless of constraint Equation \ref{eq:constraint}.
@@ -870,7 +909,7 @@ Hence, the knapsack problem with a float size cannot be solved.
 \section{Pros and cons}
 Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
 The pros are
-\begin{enumerate}
+\begin{itemize}
 \item The model takes into account multiple factors.
 It considers the maximization of sum of effective benefit
 (taking into account the benefit, the taxonomic uniqueness, and the feasibility of success)
@@ -882,10 +921,10 @@ Although the algorithm may be difficult to be come up with,
 its mechanism and program is simple, and its result can be reproduced easily.
 \item The model provides a method to output the actually chosen items in the recursive solution of a knapsack problem.
 It combines the advantages of the dynamic programming solution and the recursive solution: be fast regarding large knapsack problems and be able to output the contents of the optimal plan.
-\end{enumerate}
+\end{itemize}
 
 The cons are
-\begin{enumerate}
+\begin{itemize}
 \item The model does not consider the funding schedule at first place.
 The funding schedule does not appear as a constraint as stated by Assumption \ref{as:funds at one time}.
 \item The model does not consider probable accidents during the plan.
@@ -893,7 +932,7 @@ The plan cannot change midway even some projects stopped accidentally (which is 
 \item The model does not consider the interrelationship between projects.
 It is normal that different projects include common actions which interrelates with each other, changing the cost.
 It is not considered as stated by Assumption \ref{as:no interrelationship}.
-\end{enumerate}
+\end{itemize}
 
 \newpage
 
@@ -958,7 +997,7 @@ $\$2600492.21$ & $\$2555863.21$ & $\$3024886.35$ & $\$1488407.44$ & $\$1340469.0
 
 \newpage
 
-\appendix
+\begin{appendices}
 
 \section{The program used to decide $Z$}
 \label{appendix:prog min T}
@@ -1031,6 +1070,8 @@ $10800000.00$ & $1631451.60$\\
 $11100000.00$ & $1638017.60$\\
 \bottomrule
 \end{longtable}
+
+\end{appendices}
 
 \newpage
 

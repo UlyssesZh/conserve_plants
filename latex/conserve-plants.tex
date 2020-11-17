@@ -128,11 +128,11 @@ To be specific, the problem is to reach the goal described in Section \ref{sec:g
 
 The factors that we need to consider are
 \begin{itemize}
-\item The total benefit of the plan should be as larger as possible;
+\item The total benefit of the plan should be larger as possible;
 \item The time spent on the plan should be shorter as possible;
 \item Considering the taxonomic uniqueness of protected species, the benefit of a project may not be fully exerted;
 \item Considering the feasibility of success, a project may not be successfully executed;
-\item The funds spent overtime should be as balanced as possible.
+\item The funds spent over time should be balanced as possible.
 \end{itemize}
 
 These factors are coupled in different ways and have different priorities.
@@ -148,8 +148,8 @@ The whole process is mainly shown in Section \ref{sec:model}, explaining the mat
 
 \section{List of symbols}
 
-To make our model concise and straight forward, a list of symbols are defined as follows, as shown in Table \ref{tab:symbols}.
-The meaning of the symbols is to be explained in detail in the rest of this article.
+To make our model concise and straight forward, a list of symbols are defined as the following, as shown in Table \ref{tab:symbols}.
+The meanings of the symbols are to be explained in detail in the rest of this article.
 In the table, the symbols in lower case are variables w.r.t. a project,
 and the symbols in upper case are variables w.r.t. the plan.
 The difference between a project and the plan is described in Section \ref{sec:projects and the plan}.
@@ -230,7 +230,7 @@ but cannot be adjusted by pausing some certain projects.
 In other words, it is impossible that the plan requires to pause a project because funds are used up.
 This makes it possible that the funds spent by a project during a plan can be described according to only a single number $a_x$.
 
-This assumption also avoids the possibility that a project fails midway when executed, creating better choices for the rest of the remediation plan.
+This assumption also avoids the possibility that a project fails midway when executed, creating better choices for the rest of the plan for remediation.
 
 \begin{assumption}
 \label{as:no interrelationship}
@@ -391,14 +391,14 @@ k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\frac{\sigma}{I}>\
 \subsection{Projects and the plan}
 \label{sec:projects and the plan}
 
-The word \textbf{project} is used to represent conservation of a certain species of plant.
+The word \textbf{project} is used to represent the conservation of a certain species of plant.
 According to the TPD, there are some \textbf{raw data} attributed to a project $x$, which are
 the \textbf{unique id}, the \textbf{taxonomic uniqueness} $u_x$, the \textbf{feasibility of success} $s_x$, the \textbf{cost} $c_{x,n}$ of the $n$th year.
 These concepts are explained in Section \ref{sec:raw attributes}.
 
 The word \textbf{plan} is used to represent how the projects are going to be executed,
 including which projects are executed (the set $Z$) and when they should start (the sequence $\left\{a_x\right\}$).
-Deciding which projects to be executed is to maximize time efficiency (described in Section \ref{sec:time efficiency}).
+Deciding which projects to be executed is to maximize the time efficiency (described in Section \ref{sec:time efficiency}).
 Deciding when the projects start is to minimize the variance of yearly cost (described in Section \ref{sec:variance of yearly costs}).
 
 \subsection{Raw attributes of projects}
@@ -450,7 +450,7 @@ The \textbf{effective benefit} of a project is a real number $\beta_x\in\left[0,
 \end{equation}
 \end{definition}
 
-Here is the explanation of why effective benefit should be defined as Equation \ref{eq:effective benefit}.
+Here is the explanation of why the effective benefit should be defined as Equation \ref{eq:effective benefit}.
 
 First, consider the effect of $u_x$.
 If $u_x=0$, which means there is a species the same as the conserved species,
@@ -573,7 +573,7 @@ Thus, if the plan consists of both the $2$ projects,
 \end{equation*}
 Therefore, the plan consisting of only project $0$ is better than that of both projects.
 
-From the $2$ cases above, it can be derived that there always exists a plan with a single project having the largest $\frac TC$ compared to any other plan.
+From the $2$ cases above, it can be derived that there always exists a plan with the single project having the largest $\frac TC$ compared to any other plan.
 \end{proof}
 
 \subsection{Variance of yearly costs}
@@ -645,7 +645,7 @@ C\le F.
 \end{equation}
 
 There are also constraints resulting from the restrictions for $a_x$ due to the optimization of $T$.
-According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or ends after the longest project end.
+According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or end after the longest project end.
 Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time.
 \begin{equation}
 \label{eq:start time constraint}
@@ -717,7 +717,7 @@ shown in Algorithm \ref{alg:dp}.
 \end{algorithm}
 
 However, this algorithm does not fit with our problem here
-because $F$ and $c_x$ should be natural numbers to appear as an index of elements in arrays like $m$ and $p$.
+because $F$ and $c_x$ should be natural numbers to appear as indices of elements in arrays like $m$ and $p$.
 The conflict can be resolved by rounding the values into integers,
 but due to the large capacity of the knapsack and the large weight of the items,
 the algorithm cannot give a result in an acceptable time until the rounding makes the inaccuracy so significant that the result is not convincing at all.
@@ -757,8 +757,8 @@ The new algorithm is shown in Algorithm \ref{alg:recursive}.
 However, when there are many projects, the recursive algorithm even takes more time than the DP algorithm
 because there some $\left(F,x\right)$ being calculated multiple times.
 Since this recursive function is a pure function, a cache can be used to store previously calculated results.
-Nonetheless, since $F$ and $c_x$ are floating numbers, the probability of cache hit is low.
-To increase the probability of a cache hit, the numbers should be rounded.
+Nonetheless, since $F$ and $c_x$ are floating numbers, the probability of cache hits is low.
+To increase the probability of cache hits, the numbers should be rounded.
 In our case, they are rounded to $\SI{100}{dollars}$.
 
 There can also be some other optimizations.

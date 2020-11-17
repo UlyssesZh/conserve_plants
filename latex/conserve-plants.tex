@@ -65,7 +65,7 @@ Summary Sheet
 
 Helping Florida to use the funds in an effective and balanced way is a problem related to the optimization with multiple constraints.
 To solve the difficult problem, we developed a knapsack model and a scheduling model to analyze the properties of the projects involved in the conservation plan and find out what mathematical process we are going to go through to reach our goal.
-We also modified the algorithm for knapsack problem to solve the model and derive the result: the best schedule of the plan.
+We also modified the algorithm for the knapsack problem to solve the model and derive the result: the best schedule of the plan.
 
 We have given formal analysis over all the concepts related to our model,
 including the raw attributes of the projects given in the attachments of the problem
@@ -73,16 +73,16 @@ and the derived attributes of the plan and projects calculated from the raw attr
 After analyzing the factors we need to consider for the problem, we find that the problem can be reduced into two smaller problems: a knapsack problem and a scheduling problem.
 
 The knapsack problem is to select proper projects so that the efficiency of the plan is maximized.
-We have used a modified algorithm for knapsack problem to solve the knapsack model.
+We have used a modified algorithm for the knapsack problem to solve the knapsack model.
 After this step, we have derived the best choice of projects.
 
-The scheduling problem is to decide the start time for the projects in the plan so that the funds spent over time is most balanced.
-We have used mathematics to reduce the problem into a minimization of sum of square, and used a rather brute force algorithm to get the result.
+The scheduling problem is to decide the start time for the projects in the plan so that the funds spent over time are most balanced.
+We have used mathematics to reduce the problem into a minimization of the sum of squares and used a rather brute force algorithm to get the result.
 This gives us the final schedule of the conservation plan.
 
 Finally, we reviewed our model and listed its pros and cons.
 Although some of the general assumptions of the model make its application limited,
-the comprehensiveness and effectiveness of our model is significant.
+the comprehensiveness and effectiveness of our model are significant.
 
 \newpage
 
@@ -93,19 +93,19 @@ the comprehensiveness and effectiveness of our model is significant.
 \label{sec:intro}
 
 It is a global issue that the decrease in biodiversity due to the extinction of endangered plants is a serious problem for the balance of the ecosystem.
-To avoid this, people need to spend money on protecting the plants and animals.
+To avoid this, people need to spend money on protecting plants and animals.
 
 However, in some places like Florida, greatly needing biodiversity conservation,
 people do not have enough money to protect all of the imperiled species there.
-They need to find out a proper scheme of funding and protecting to make full use of the funds to get as much benefit as possible.
+They need to find out a proper scheme of funding and protection to make full use of the funds to get as much benefit as possible.
 
 Different projects of conservation have different cost, benefit, and required time,
-as shown in the table of threatened plants data (abbreviated as TPD in the following parts of the paper).
+as shown in the table of threatened plant data (abbreviated as TPD in the following parts of the paper).
 It is to be determined which projects are selected in the optimal plan according to these factors.
 After choosing the projects, when to start the projects should also be determined to balance the funds spent over time as possible.
 
 To make it clear what is going to be done, the problem is restated in Section \ref{sec:restatement}.
-The model used in our solution to the problem and its explanation are shown in Section \ref{sec:model}.
+The model used in our solution to the problem and its explanation is shown in Section \ref{sec:model}.
 The algorithms used to solve the model are introduced and explained in Section \ref{sec:approach}.
 We will also write a non-technical memo in Section \ref{sec:memo} to give our proposal according to the result of our model.
 
@@ -114,13 +114,13 @@ We will also write a non-technical memo in Section \ref{sec:memo} to give our pr
 
 Various plant conservation projects with different budgets and timelines are to be conducted.
 However, one major issue is that funds are not sufficient to support all projects.
-Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their fund.
+Therefore, it is essential to make a plan for the managers who monitor the whole plan to help them precisely decide which project should be included and when and how to allocate their funds.
 
-What is notable is that the final goal of this plan is not to simply save as many as plant species as possible.
-Instead, it should generate greatest benefit meanwhile taking account of different factors, like feasibility of success and the uniqueness of this species.
-The time spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of another plant dying out shall increase, finally leading to less benefit.
+What is notable is that the final goal of this plan is not to simply save as many plant species as possible.
+Instead, it should generate the greatest benefit meanwhile taking account of different factors, like the feasibility of success and the uniqueness of this species.
+The time-spanning to finish the whole plan is also a factor that needs to be seriously considered because as more time being taken to protect one species, the likelihood of another plant dying out shall increase, finally leading to less benefit.
 Another factor is the funds spent on these projects.
-Obviously, a project with median benefit but high expense does not fit.
+Obviously, a project with a median benefit but high expense does not fit.
 The most suitable plan we need to find out should include all variables mentioned and give the best result.
 
 The mathematical description of the problem is given in Section \ref{sec:model}.
@@ -128,11 +128,11 @@ To be specific, the problem is to reach the goal described in Section \ref{sec:g
 
 The factors that we need to consider are
 \begin{itemize}
-\item The total benefit of the plan should be larger as possible;
+\item The total benefit of the plan should be as larger as possible;
 \item The time spent on the plan should be shorter as possible;
 \item Considering the taxonomic uniqueness of protected species, the benefit of a project may not be fully exerted;
 \item Considering the feasibility of success, a project may not be successfully executed;
-\item The funds spent over time should be balanced as possible.
+\item The funds spent overtime should be as balanced as possible.
 \end{itemize}
 
 These factors are coupled in different ways and have different priorities.
@@ -148,8 +148,8 @@ The whole process is mainly shown in Section \ref{sec:model}, explaining the mat
 
 \section{List of symbols}
 
-To make our model concise and straight forward, a list of symbols are defined as following, as shown in Table \ref{tab:symbols}.
-The meaning of the symbols are to be explained in detail in the rest of this article.
+To make our model concise and straight forward, a list of symbols are defined as follows, as shown in Table \ref{tab: symbols}.
+The meaning of the symbols is to be explained in detail in the rest of this article.
 In the table, the symbols in lower case are variables w.r.t. a project,
 and the symbols in upper case are variables w.r.t. the plan.
 The difference between a project and the plan is described in Section \ref{sec:projects and the plan}.
@@ -214,7 +214,7 @@ We do consider the situation that different funds are raised in different years,
 but when adjusting $a_x$ in the plan, not when deciding $Z$.
 This can simplify the constraint given by the limitation of funds.
 
-If we consider that the funds may be given differently in different years at the first place as a constraint for our plan,
+If we consider that the funds may be given differently in different years in the first place as a constraint for our plan,
 Equation \ref{eq:constraint} will be written in a far more complicated way, which invalidates all the algorithms and theorems stated in Section \ref{sec:approach}.
 In fact, without this assumption, the problem becomes NP-hard because it can be reduced to a multi-dimensional knapsack problem \cite{2dknapsacknp}.
 
@@ -230,7 +230,7 @@ but cannot be adjusted by pausing some certain projects.
 In other words, it is impossible that the plan requires to pause a project because funds are used up.
 This makes it possible that the funds spent by a project during a plan can be described according to only a single number $a_x$.
 
-This assumption also avoids the possibility that a project fails midway when executed, creating better choices for the rest of the plan for remediation.
+This assumption also avoids the possibility that a project fails midway when executed, creating better choices for the rest of the remediation plan.
 
 \begin{assumption}
 \label{as:no interrelationship}
@@ -391,14 +391,14 @@ k+\sum_{j=1}^{p-1} {\sum_{i=1}^j}{\sum_{u_i}}E_{u_i}^{p-i+1}+p\frac{\sigma}{I}>\
 \subsection{Projects and the plan}
 \label{sec:projects and the plan}
 
-The word \textbf{project} is used to represent a conservation of a certain species of plant.
+The word \textbf{project} is used to represent conservation of a certain species of plant.
 According to the TPD, there are some \textbf{raw data} attributed to a project $x$, which are
 the \textbf{unique id}, the \textbf{taxonomic uniqueness} $u_x$, the \textbf{feasibility of success} $s_x$, the \textbf{cost} $c_{x,n}$ of the $n$th year.
 These concepts are explained in Section \ref{sec:raw attributes}.
 
 The word \textbf{plan} is used to represent how the projects are going to be executed,
 including which projects are executed (the set $Z$) and when they should start (the sequence $\left\{a_x\right\}$).
-Deciding the which projects to be executed is to maximize the time efficiency (described in Section \ref{sec:time efficiency}).
+Deciding which projects to be executed is to maximize time efficiency (described in Section \ref{sec:time efficiency}).
 Deciding when the projects start is to minimize the variance of yearly cost (described in Section \ref{sec:variance of yearly costs}).
 
 \subsection{Raw attributes of projects}
@@ -450,7 +450,7 @@ The \textbf{effective benefit} of a project is a real number $\beta_x\in\left[0,
 \end{equation}
 \end{definition}
 
-Here is the explanation of why the effective benefit should be defined as Equation \ref{eq:effective benefit}.
+Here is the explanation of why effective benefit should be defined as Equation \ref{eq:effective benefit}.
 
 First, consider the effect of $u_x$.
 If $u_x=0$, which means there is a species the same as the conserved species,
@@ -467,7 +467,7 @@ According to the law of large numbers, the portion of successful executions is t
 while the rest does not make any benefit.
 Then, the mean of all the benefits is $s_x\cdot b_x+\left(1-s_x\right)\cdot0=b_xs_x$.
 
-Combining the two effects above, the formula for effective benefit (Equation \ref{eq:effective benefit}) can be derived.
+Combining the two effects above, the formula for the effective benefit (Equation \ref{eq:effective benefit}) can be derived.
 
 From now on, when measuring how much can a project benefit people,
 $\beta_x$ is used instead of $b_x$.
@@ -519,12 +519,12 @@ whose reason can be found in Section \ref{sec:goal}.
 
 According to Assumption \ref{as:time efficiency over balancing}, $T$ should be maximized before we think about how $a_x$ can be adjusted to balance the funds spent over time.
 To maximize the time efficiency, the duration of the plan is the same as the duration of the project with the largest duration ($\xi$) in the plan,
-where $\xi$ is the project with largest duration among $Z$
+where $\xi$ is the project with the largest duration among $Z$
 \begin{equation}
 \xi:=\argmax_{x\in Z}d_x.
 \end{equation}
-Then, when $a_x$ are adjusted to minimize variance of yearly costs,
-the start time of projects with shorter duration than $d_\xi$ will never be changed to make them start before $\xi$ starts or end after $\xi$ ends
+Then, when $a_x$ are adjusted to minimize the variance of yearly costs,
+the start time of projects with a shorter duration than $d_\xi$ will never be changed to make them start before $\xi$ starts or end after $\xi$ ends
 because otherwise $D$ increases and thus makes $T$ smaller.
 Therefore, rather than the straight-forward definition shown in Section \ref{sec:duration}, there is a better definition.
 
@@ -573,7 +573,7 @@ Thus, if the plan consists of both the $2$ projects,
 \end{equation*}
 Therefore, the plan consisting of only project $0$ is better than that of both projects.
 
-From the $2$ cases above, it can be derived that there always exists a plan with single project having the largest $\frac TC$ compared to any other plan.
+From the $2$ cases above, it can be derived that there always exists a plan with a single project having the largest $\frac TC$ compared to any other plan.
 \end{proof}
 
 \subsection{Variance of yearly costs}
@@ -645,7 +645,7 @@ C\le F.
 \end{equation}
 
 There are also constraints resulting from the restrictions for $a_x$ due to the optimization of $T$.
-According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or end after the longest project end.
+According to the discussions in Section \ref{sec:time efficiency}, any projects in the plan should not start before the longest project start or ends after the longest project end.
 Let the start time of the longest project in the plan be the $0$th year, and then we have constraints for the start time.
 \begin{equation}
 \label{eq:start time constraint}
@@ -717,13 +717,13 @@ shown in Algorithm \ref{alg:dp}.
 \end{algorithm}
 
 However, this algorithm does not fit with our problem here
-because $F$ and $c_x$ should be natural numbers to appear as index of elements in arrays like $m$ and $p$.
+because $F$ and $c_x$ should be natural numbers to appear as an index of elements in arrays like $m$ and $p$.
 The conflict can be resolved by rounding the values into integers,
 but due to the large capacity of the knapsack and the large weight of the items,
-the algorithm cannot give a result in acceptable time until the rounding makes the inaccuracy so significant that the result is not convincing at all.
+the algorithm cannot give a result in an acceptable time until the rounding makes the inaccuracy so significant that the result is not convincing at all.
 
 Thus, a new algorithm should be developed.
-The main reason for Algorithm \ref{alg:dp} to be slow is that it traverse through a whole continuous part of array $m$ whenever it traverse a project $x$,
+The main reason for Algorithm \ref{alg:dp} to be slow is that it traverses through a whole continuous part of the array $m$ whenever it traverses a project $x$,
 while most of the elements in $m$ are useless and are unnecessary to be updated.
 However, whether an element in $m$ is useful cannot be determined using the DP algorithm.
 Inspired by this thought, the recursive algorithm can be adopted because it can make the program consider small $w$ values first and determine which $w$ values later on are useful.
@@ -756,9 +756,9 @@ The new algorithm is shown in Algorithm \ref{alg:recursive}.
 
 However, when there are many projects, the recursive algorithm even takes more time than the DP algorithm
 because there some $\left(F,x\right)$ being calculated multiple times.
-Since this recursive function is a pure function, a cache can be used to store previously calculated result.
+Since this recursive function is a pure function, a cache can be used to store previously calculated results.
 Nonetheless, since $F$ and $c_x$ are floating numbers, the probability of cache hit is low.
-To increase the probability of cache hit, the numbers should be rounded.
+To increase the probability of a cache hit, the numbers should be rounded.
 In our case, they are rounded to $\SI{100}{dollars}$.
 
 There can also be some other optimizations.
@@ -907,30 +907,30 @@ Hence, the knapsack problem with a float size cannot be solved.
 \end{comment}
 
 \section{Pros and cons}
-Our model have some pros and cons in solving the problem described in \ref{sec:intro}.
+Our model has some pros and cons in solving the problem described in \ref{sec:intro}.
 The pros are
 \begin{itemize}
 \item The model takes into account multiple factors.
-It considers the maximization of sum of effective benefit
+It considers the maximization of the sum of effective benefit
 (taking into account the benefit, the taxonomic uniqueness, and the feasibility of success)
 of the projects in the plan,
 the minimization of the duration of executing the plan,
 and the balance of funds spent over time.
 \item The mechanism and theories about the model are simple and easy to understand.
 Although the algorithm may be difficult to be come up with,
-its mechanism and program is simple, and its result can be reproduced easily.
+its mechanism and program are simple, and its result can be reproduced easily.
 \item The model provides a method to output the actually chosen items in the recursive solution of a knapsack problem.
 It combines the advantages of the dynamic programming solution and the recursive solution: be fast regarding large knapsack problems and be able to output the contents of the optimal plan.
 \end{itemize}
 
 The cons are
 \begin{itemize}
-\item The model does not consider the funding schedule at first place.
+\item The model does not consider the funding schedule in the first place.
 The funding schedule does not appear as a constraint as stated by Assumption \ref{as:funds at one time}.
 \item The model does not consider probable accidents during the plan.
 The plan cannot change midway even some projects stopped accidentally (which is not considered due to Assumption \ref{as:no pause}), creating better choices for the rest of the plan as remediation.
 \item The model does not consider the interrelationship between projects.
-It is normal that different projects include common actions which interrelates with each other, changing the cost.
+It is normal that different projects include common actions that interrelate with each other, changing the cost.
 It is not considered as stated by Assumption \ref{as:no interrelationship}.
 \end{itemize}
 
